@@ -49,4 +49,15 @@ code.
 
 ### Older Tags
 
-* None
+* This repo is moved from the old spec test repo. For older tags and history, please refer to the [WasmEdge-unittest repo](https://github.com/second-state/WasmEdge-unittest).
+  * `wasm-core-20240217`: The test suite in the date 2024/02/17 from the WASM spec.
+  * `wasm-core-20231026`: The test suite in the date 2023/10/26 from the WASM spec.
+  * `wasm-core-20230511`: The test suite in the date 2023/05/11 from the WASM spec.
+  * `wasm-core-20221215`: The test suite in the date 2022/12/15 from the WASM spec.
+  * `wasm-core-20221026`: The test suite in the date 2022/10/26 from the WASM spec.
+  * `wasm-core-20220712`: The test suite in the date 2022/07/12 from the WASM spec.
+  * `wasm-core-20220504`: The test suite in the date 2022/05/04 from the WASM spec.
+  * `wasm-core-20220223`: The test suite in the date 2022/02/23 from the WASM spec.
+  * `wasm-core-20211214`: The test suite in the date 2021/12/14 from the WASM spec.
+  * `wasm-core-20211119`: The test suite in the date 2021/11/19 from the WASM spec.
+  * `wasm-core-20210414`: The test suite in the date 2021/04/14 from the WASM spec.
