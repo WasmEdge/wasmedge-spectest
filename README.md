@@ -4,8 +4,9 @@
 
 * Test data is from [WebAssembly Core Tests](https://github.com/WebAssembly/spec/tree/master/test/core) and tests from every proposals.
 
-* [S-Expression script](https://github.com/WebAssembly/spec/blob/master/interpreter/README.md#s-expression-syntax) of tests are extracted into `json` and `wasm` files by [wast2json](https://webassembly.github.io/wabt/doc/wast2json.1.html) tool in [wabt](https://github.com/WebAssembly/wabt).
-code.
+* [S-Expression script](https://github.com/WebAssembly/spec/blob/main/interpreter/README.md#scripts) of tests are extracted into `json` and `wasm` files by [wast2json](https://webassembly.github.io/wabt/doc/wast2json.1.html) tool in [wabt](https://github.com/WebAssembly/wabt).
+
+* For those WASM text format not supported by [wabt](https://github.com/WebAssembly/wabt) currently, parsing and converting into binary files are credited by [wasm-tools](https://github.com/bytecodealliance/wasm-tools).
 
 ## Folders
 
@@ -18,33 +19,62 @@ code.
   * [Reference Types](https://github.com/WebAssembly/reference-types)
   * [Bulk memory operations](https://github.com/WebAssembly/bulk-memory-operations)
   * [Fixed-width SIMD](https://github.com/webassembly/simd)
-* `exception-handling`: The tests of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal.
-* `exception-handling-legacy`: The legacy version tests of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal.
-* `extended-const`: The tests of the [Extended Constant Expressions](https://github.com/WebAssembly/extended-const) proposal.
-* `function-references`: The tests of the [Typed Function References](https://github.com/WebAssembly/function-references) proposal.
-* `gc`: The tests of the [Garbage collection](https://github.com/WebAssembly/gc) proposal.
-* `memory64`: The tests of the [Memory64](https://github.com/WebAssembly/memory64) proposal.
-* `multi-memory`: The tests of the [Multiple memories](https://github.com/WebAssembly/multi-memory) proposal.
-* `relaxed-simd`: The tests of the [Relaxed SIMD](https://github.com/WebAssembly/relaxed-simd) proposal.
-* `tail-call`: The tests of the [Tail call](https://github.com/WebAssembly/tail-call) proposal.
+* `wasm-3.0` prefixed folders: The WASM 3.0 tests with WASM 1.0, WASM 2.0, and the following proposals:
+  * [Exception handling](https://github.com/WebAssembly/exception-handling)
+  * [Extended Constant Expressions](https://github.com/WebAssembly/extended-const)
+  * [Typed Function References](https://github.com/WebAssembly/function-references)
+  * [Garbage collection](https://github.com/WebAssembly/gc)
+  * [Memory64](https://github.com/WebAssembly/memory64) (Temorary not added due to unimplementation in WasmEdge)
+  * [Multiple memories](https://github.com/WebAssembly/multi-memory)
+  * [Relaxed SIMD](https://github.com/WebAssembly/relaxed-simd)
+  * [Tail call](https://github.com/WebAssembly/tail-call)
 * `threads`: The tests of the [Threads](https://github.com/webassembly/threads) proposal.
+* `exception-handling-legacy`: The legacy version tests of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal.
+  * This is deprecated.
 
 ## Whats Difference
 
 * `wasm-2.0/select/select.wast` line 325: `invalid result arity` -> `type mismatch`
   * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
+* `wasm-3.0/select/select.wast` line 369: `invalid result arity` -> `type mismatch`
+  * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
+* `wasm-3.0/align/align.wast` line 1005: Temporary disable this test
+  * Temporary disable this test until the implementation of memory64 proposal finished in WasmEdge.
+  * Disabled data set: `{"type": "assert_invalid", "line": 1005, "filename": "align.115.wasm", "text": "offset out of range", "module_type": "binary"}`
+* `wasm-3.0/memory/memory.wast` line 78, 82, 86, 91, 95, 99: Temporary disable these tests
+  * Temporary disable these tests until the implementation of memory64 proposal finished in WasmEdge.
+  * Disabled data set: `{"type": "assert_invalid", "line": 78, "filename": "memory.26.wasm", "text": "memory size", "module_type": "binary"}`
+  * Disabled data set: `{"type": "assert_invalid", "line": 82, "filename": "memory.27.wasm", "text": "memory size", "module_type": "binary"}`
+  * Disabled data set: `{"type": "assert_invalid", "line": 86, "filename": "memory.28.wasm", "text": "memory size", "module_type": "binary"}`
+  * Disabled data set: `{"type": "assert_invalid", "line": 91, "filename": "memory.29.wasm", "text": "memory size", "module_type": "binary"}`
+  * Disabled data set: `{"type": "assert_invalid", "line": 95, "filename": "memory.30.wasm", "text": "memory size", "module_type": "binary"}`
+  * Disabled data set: `{"type": "assert_invalid", "line": 99, "filename": "memory.31.wasm", "text": "memory size", "module_type": "binary"}`
+* `wasm-3.0/instance` folder moved to `wasm-3.0-exceptions`
+  * Temporary move this test set to the exception handling folder until the implementation of exception-handling proposal of AOT/JIT finished in WasmEdge.
+* Updated the error message text for old tests
+  * Update the `global is immutable` to `immutable global` according to the newest test suite.
+    * `wasm-1.0/global/global.wast` line 244
+    * `wasm-2.0/global/global.wast` line 274, 279
+* New S-Expression script not supported by [wabt](https://github.com/WebAssembly/wabt)
+  * module definition: add a new `"module_definition"` type in commands array in JSON which has the same content structure as `"module"`.
+    * `wasm-3.0/instance/instance.wast` line 3, 109
+    * `wasm-3.0/memory/memory.wast` line 8
+    * `wasm-3.0/table/table.wast` line 9
+    * `wasm-3.0-memory64/memory64/memory64.wast` line 8
+    * `wasm-3.0-memory64/table64/table64.wast` line 9
+  * module instance: add a new `"module_instance"` type in commands array in JSON which has almost the same content structure as `"register"`, but use the `"definition"` to present the name of module definition source.
+    * `wasm-3.0/instance/instance.wast` line 10, 11, 125
 * `threads/atomic/atomic.wast`: divergence behavior
   * Please check [this issue](https://github.com/WebAssembly/threads/issues/195).
   * Modified the `wast` file for fitting the `compare_exchange_strong` behavior in C++.
 * `threads/atomic_wait_notify/atomic_wait_notify.wast`: line 73: remove the thread tests.
   * The S-Expression of threads cannot be parsed by wabt, therefore remove them.
-* `function-references/select/select.wast` line 369: `invalid result arity` -> `type mismatch`
-  * This error message is for the WAT format, WASM format cannot detect this error by the byte
 
 ## Tags
 
 ### Active Tags
 
+* `wasm-core-20251029`: The test suite in the date 2025/10/29 from the WASM spec and proposals.
 * `wasm-core-20250217`: The test suite in the date 2025/02/17 from the WASM spec and proposals.
 
 ### Older Tags
