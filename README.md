@@ -38,17 +38,6 @@
   * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
 * `wasm-3.0/select/select.wast` line 369: `invalid result arity` -> `type mismatch`
   * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
-* `wasm-3.0/align/align.wast` line 1005: Temporary disable this test
-  * Temporary disable this test until the implementation of memory64 proposal finished in WasmEdge.
-  * Disabled data set: `{"type": "assert_invalid", "line": 1005, "filename": "align.115.wasm", "text": "offset out of range", "module_type": "binary"}`
-* `wasm-3.0/memory/memory.wast` line 78, 82, 86, 91, 95, 99: Temporary disable these tests
-  * Temporary disable these tests until the implementation of memory64 proposal finished in WasmEdge.
-  * Disabled data set: `{"type": "assert_invalid", "line": 78, "filename": "memory.26.wasm", "text": "memory size", "module_type": "binary"}`
-  * Disabled data set: `{"type": "assert_invalid", "line": 82, "filename": "memory.27.wasm", "text": "memory size", "module_type": "binary"}`
-  * Disabled data set: `{"type": "assert_invalid", "line": 86, "filename": "memory.28.wasm", "text": "memory size", "module_type": "binary"}`
-  * Disabled data set: `{"type": "assert_invalid", "line": 91, "filename": "memory.29.wasm", "text": "memory size", "module_type": "binary"}`
-  * Disabled data set: `{"type": "assert_invalid", "line": 95, "filename": "memory.30.wasm", "text": "memory size", "module_type": "binary"}`
-  * Disabled data set: `{"type": "assert_invalid", "line": 99, "filename": "memory.31.wasm", "text": "memory size", "module_type": "binary"}`
 * `wasm-3.0/instance` folder moved to `wasm-3.0-exceptions`
   * Temporary move this test set to the exception handling folder until the implementation of exception-handling proposal of AOT/JIT finished in WasmEdge.
 * Updated the error message text for old tests
