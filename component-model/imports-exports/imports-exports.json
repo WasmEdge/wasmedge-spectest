@@ -1,0 +1,5 @@
+{"source_filename": "imports-exports.wast",
+ "commands": [
+  {"type": "module", "line": 5, "filename": "imports-exports.0.wasm", "module_type": "binary"}
+ ]
+}
