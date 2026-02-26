@@ -1,0 +1,5 @@
+{"source_filename": "link.wast",
+ "commands": [
+  {"type": "module", "line": 5, "filename": "link.0.wasm", "module_type": "binary"}
+ ]
+}
