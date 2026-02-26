@@ -1,0 +1,5 @@
+{"source_filename": "lots-of-aliases.wast",
+ "commands": [
+  {"type": "module", "line": 3, "filename": "lots-of-aliases.0.wasm", "module_type": "binary"}
+ ]
+}
