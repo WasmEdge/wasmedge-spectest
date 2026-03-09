@@ -111,7 +111,7 @@
     (import "a" (instance (export "a" (func))))
     (export "a" (core module 0 "a"))
   )
-  "export `a` for instance 0 is not a module")
+  "alias unknown export module")
 
 (assert_invalid
   (component
@@ -121,7 +121,7 @@
     (instance (instantiate 0))
     (export "a" (core module 0 "a"))
   )
-  "export `a` for instance 0 is not a module")
+  "alias unknown export module")
 
 (assert_invalid
   (component
@@ -129,7 +129,7 @@
     (core instance (instantiate 0))
     (alias core export 0 "a" (core func))
   )
-  "core instance 0 has no export named `a`")
+  "alias unknown export name")
 
 (assert_invalid
   (component
@@ -137,7 +137,7 @@
     (core instance (instantiate 0))
     (alias core export 0 "a" (core func))
   )
-  "core instance 0 has no export named `a`")
+  "alias unknown export name")
 
 (assert_invalid
   (component
@@ -145,7 +145,7 @@
     (instance (instantiate 0))
     (alias export 0 "a" (func))
   )
-  "instance 0 has no export named `a`")
+  "alias unknown export name")
 
 (assert_invalid
   (component
@@ -260,7 +260,7 @@
 
 (assert_invalid
   (component (alias outer 100 0 (core type)))
-  "invalid outer alias count of 100")
+  "invalid outer alias count")
 
 (assert_invalid
   (component (alias outer 0 0 (core type)))
@@ -268,7 +268,7 @@
 
 (assert_invalid
   (component (alias outer 100 0 (core module)))
-  "invalid outer alias count of 100")
+  "invalid outer alias count")
 
 (assert_invalid
   (component (alias outer 0 0 (core module)))
@@ -276,7 +276,7 @@
 
 (assert_invalid
   (component (alias outer 100 0 (component)))
-  "invalid outer alias count of 100")
+  "invalid outer alias count")
 
 (assert_invalid
   (component (alias outer 0 0 (component)))

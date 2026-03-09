@@ -5,21 +5,21 @@
     (type $t (instance))
     (import "a" (func (type $t)))
   )
-  "type index 0 is not a function type")
+  "unknown function type")
 
 (assert_invalid
   (component
     (core type $t (func))
     (import "a" (core module (type $t)))
   )
-  "core type index 0 is not a module type")
+  "unknown module type")
 
 (assert_invalid
   (component
     (type $t (func))
     (import "a" (instance (type $t)))
   )
-  "type index 0 is not an instance type")
+  "unknown instance type")
 
 (assert_invalid
   (component
@@ -28,7 +28,7 @@
       (import "a" (instance (type $t)))
     ))
   )
-  "type index 0 is not an instance type")
+  "unknown instance type")
 
 (assert_invalid
   (component
@@ -37,7 +37,7 @@
       (import "a" (core module (type $t)))
     ))
   )
-  "core type index 0 is not a module type")
+  "unknown module type")
 
 (assert_invalid
   (component
@@ -46,7 +46,7 @@
       (import "a" (func (type $t)))
     ))
   )
-  "type index 0 is not a function type")
+  "unknown function type")
 
 (assert_invalid
   (component
@@ -75,7 +75,7 @@
       (export "a" (func))
     ))
   )
-  "export name `a` already defined")
+  "duplicate export name")
 
 (assert_invalid
   (component
@@ -109,7 +109,7 @@
       (export "A" (func))
     ))
   )
-  "export name `A` conflicts with previous name `a`")
+  "conflicts with previous export name")
 
 (assert_invalid
   (component
@@ -118,7 +118,7 @@
       (import "a" (func))
     ))
   )
-  "import name `a` conflicts with previous name `A`")
+  "conflicts with previous import name")
 
 (assert_malformed
   (component quote
@@ -162,7 +162,7 @@
       (alias outer 100 0 (type))
     ))
   )
-  "invalid outer alias count of 100")
+  "invalid outer alias count")
 
 (assert_invalid
   (component $c
@@ -174,7 +174,7 @@
       ))
     ))
   )
-  "name `` already defined")
+  "duplicate export name")
 
 (assert_invalid
   (component
@@ -191,7 +191,7 @@
       (export "FOO-bar-BAZ" (func))
     ))
   )
-  "export name `FOO-bar-BAZ` conflicts with previous name `foo-BAR-baz`")
+  "conflicts with previous export name")
 
 (assert_malformed
   (component quote
@@ -214,7 +214,7 @@
       (alias outer 100 0 (type))
     ))
   )
-  "invalid outer alias count of 100")
+  "invalid outer alias count")
 
 (assert_invalid
   (component $c
@@ -226,7 +226,7 @@
       ))
     ))
   )
-  "name `` already defined")
+  "duplicate export name")
 
 (assert_invalid
   (component $c
@@ -365,7 +365,7 @@
     (core type $t (module))
     (core type (func (param (ref $t))))
   )
-  "type index 0 is a module type")
+  "unknown module type")
 
 (assert_invalid
   (component

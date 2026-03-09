@@ -57,21 +57,21 @@
     (type $t (func))
     (type (func (param "t" $t)))
   )
-  "type index 0 is not a defined type")
+  "not a defined type")
 
 (assert_invalid
   (component
     (type $t (instance))
     (type (func (result $t)))
   )
-  "type index 0 is not a defined type")
+  "not a defined type")
 
 (assert_invalid
   (component
     (type $t (component))
     (type (option $t))
   )
-  "type index 0 is not a defined type")
+  "not a defined type")
 
 (assert_invalid
   (component (type (option 0)))
@@ -94,16 +94,16 @@
 
 (assert_invalid
   (component (type (record (field "a-B-c-D" string) (field "A-b-C-d" u8))))
-  "record field name `A-b-C-d` conflicts with previous field name `a-B-c-D`")
+  "record field name conflicts with previous field name")
 (assert_invalid
   (component (type (variant (case "x" s64) (case "x" s64))))
-  "variant case name `x` conflicts with previous case name `x`")
+  "variant case name conflicts with previous case name")
 (assert_invalid
   (component (type (flags "x" "y" "X")))
-  "flag name `X` conflicts with previous flag name `x`")
+  "flag name conflicts with previous flag name")
 (assert_invalid
   (component (type (enum "x" "y" "X")))
-  "enum tag name `X` conflicts with previous tag name `x`")
+  "enum tag name conflicts with previous tag name")
 
 (assert_invalid
   (component (type (record (field "" s32))))

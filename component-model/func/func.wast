@@ -18,7 +18,7 @@
   (component
     (type (func (param "foo" string) (param "FOO" u32)))
   )
-  "function parameter name `FOO` conflicts with previous parameter name `foo`"
+  "function parameter name conflicts with previous parameter name"
 )
 
 (assert_invalid

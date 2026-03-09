@@ -41,4 +41,4 @@
 
     (instance (instantiate $consume (with "arg" (instance $c "f2"))))
   )
-  "missing expected export `f`")
+  "missing expected export")

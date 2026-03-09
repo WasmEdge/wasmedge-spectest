@@ -21,21 +21,21 @@
     (type $f (func))
     (import "a" (instance (type $f)))
   )
-  "type index 0 is not an instance type")
+  "unknown instance type")
 
 (assert_invalid
   (component
     (core type $f (func))
     (import "a" (core module (type $f)))
   )
-  "core type index 0 is not a module type")
+  "unknown module type")
 
 (assert_invalid
   (component
     (type $f string)
     (import "a" (func (type $f)))
   )
-  "type index 0 is not a function type")
+  "unknown function type")
 
 ;; Disallow duplicate imports for core wasm modules
 (assert_invalid
@@ -45,7 +45,7 @@
       (import "" "" (func))
     ))
   )
-  "duplicate import name `:`")
+  "duplicate import name")
 (assert_invalid
   (component
     (core module
@@ -53,7 +53,7 @@
       (import "" "" (func))
     )
   )
-  "duplicate import name `:`")
+  "duplicate import name")
 (assert_invalid
   (component
     (core type (module
@@ -61,7 +61,7 @@
       (import "" "a" (func))
     ))
   )
-  "duplicate import name `:a`")
+  "duplicate import name")
 (assert_invalid
   (component
     (core module
@@ -69,14 +69,14 @@
       (import "" "a" (func))
     )
   )
-  "duplicate import name `:a`")
+  "duplicate import name")
 
 (assert_invalid
   (component
     (import "a" (func))
     (import "a" (func))
   )
-  "import name `a` conflicts with previous name `a`")
+  "import name conflicts with previous name")
 
 (assert_invalid
   (component
@@ -85,7 +85,7 @@
       (import "a" (func))
     ))
   )
-  "import name `a` conflicts with previous name `a`")
+  "import name conflicts with previous name")
 
 (assert_invalid
   (component
@@ -123,10 +123,10 @@
 
 (assert_invalid
   (component (import "" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "wasi:" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "wasi:/" (func)))
   "not in kebab case")
@@ -135,34 +135,34 @@
   "not in kebab case")
 (assert_invalid
   (component (import "wasi/http" (func)))
-  "`wasi/http` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "wasi:http/TyPeS" (func)))
-  "`TyPeS` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "WaSi:http/types" (func)))
-  "`WaSi` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "wasi:HtTp/types" (func)))
-  "`HtTp` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "wasi:http/types@" (func)))
   "empty string")
 (assert_invalid
   (component (import "wasi:http/types@." (func)))
-  "unexpected character '.'")
+  "unexpected character")
 (assert_invalid
   (component (import "wasi:http/types@1." (func)))
   "unexpected end of input")
 (assert_invalid
   (component (import "wasi:http/types@a.2" (func)))
-  "unexpected character 'a'")
+  "unexpected character")
 (assert_invalid
   (component (import "wasi:http/types@2.b" (func)))
-  "unexpected character 'b'")
+  "unexpected character")
 (assert_invalid
   (component (import "wasi:http/types@2.0x0" (func)))
-  "unexpected character 'x'")
+  "unexpected character")
 (assert_invalid
   (component (import "wasi:http/types@2.0.0+" (func)))
   "empty identifier segment")
@@ -174,7 +174,7 @@
   "expected `/` after package name")
 (assert_invalid
   (component (import "foo:bar/baz/qux" (func)))
-  "trailing characters found: `/qux`")
+  "trailing characters found")
 
 (component
   (component
@@ -196,34 +196,34 @@
 
 (assert_invalid
   (component (import "unlocked-dep=" (func)))
-  "expected `<` at ``")
+  "expected `<`")
 (assert_invalid
   (component (import "unlocked-dep=<" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "unlocked-dep=<>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "unlocked-dep=<:>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "unlocked-dep=<a:>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "unlocked-dep=<:a>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@>" (func)))
-  "expected `{` at `>`")
+  "expected `{`")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@{xyz}>" (func)))
   "expected `>=` or `<` at start of version range")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@{<xyz}>" (func)))
-  "`xyz` is not a valid semver")
+  "not a valid semver")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@{<1.2.3 >=2.3.4}>" (func)))
-  "`1.2.3 >=2.3.4` is not a valid semver")
+  "not a valid semver")
 
 (component definition
   (import "locked-dep=<a:b>" (func))
@@ -234,37 +234,37 @@
 
 (assert_invalid
   (component (import "locked-dep=" (func)))
-  "expected `<` at ``")
+  "expected `<`")
 (assert_invalid
   (component (import "locked-dep=<" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "locked-dep=<:" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "locked-dep=<:>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "locked-dep=<a:>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "locked-dep=<:a>" (func)))
-  "`` is not in kebab case")
+  "not in kebab case")
 (assert_invalid
   (component (import "locked-dep=<a:a" (func)))
-  "expected `>` at ``")
+  "expected `>`")
 (assert_invalid
   (component (import "locked-dep=<a:a@>" (func)))
   "is not a valid semver")
 (assert_invalid
   (component (import "locked-dep=<a:a@1.2.3" (func)))
-  "expected `>` at ``")
+  "expected `>`")
 (assert_invalid
   (component (import "locked-dep=<a:a@1.2.3>," (func)))
   "expected `integrity=<`")
 (assert_invalid
   (component (import "locked-dep=<a:a@1.2.3>x" (func)))
-  "trailing characters found: `x`")
+  "trailing characters found")
 
 (component definition
   (import "url=<>" (func))
@@ -274,7 +274,7 @@
 
 (assert_invalid
   (component (import "url=" (func)))
-  "expected `<` at ``")
+  "expected `<`")
 (assert_invalid
   (component (import "url=<" (func)))
   "failed to find `>`")

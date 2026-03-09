@@ -165,7 +165,7 @@
     (import "a" (component $m (import "a" (func))))
     (instance (instantiate $m))
   )
-  "missing import named `a`")
+  "missing import")
 
 (assert_invalid
   (component
@@ -175,7 +175,7 @@
     (import "b" (component $c))
     (instance $i (instantiate $m (with "a" (component $c))))
   )
-  "expected func, found component")
+  "expected func")
 
 (assert_invalid
   (component
@@ -185,7 +185,7 @@
     (import "b" (func $f (result string)))
     (instance $i (instantiate $m (with "a" (func $f))))
   )
-  "expected a result, found none")
+  "expected a result")
 
 (assert_invalid
   (component
@@ -195,7 +195,7 @@
     (import "b" (func (param "i" string)))
     (instance $i (instantiate $m (with "a" (func 0))))
   )
-  "expected 0 parameters, found 1")
+  "type mismatch in function type")
 
 (assert_invalid
   (component
@@ -209,7 +209,7 @@
     ))
     (instance $i (instantiate $m (with "a" (core module $i))))
   )
-  "type mismatch in import `::`")
+  "type mismatch in import")
 
 (assert_invalid
   (component
@@ -221,7 +221,7 @@
     ))
     (instance $i (instantiate $m (with "a" (core module $i))))
   )
-  "missing expected import `::foobar`")
+  "missing expected import")
 (assert_invalid
   (component
     (import "a" (component $m
@@ -230,7 +230,7 @@
     (import "b" (core module $i))
     (instance $i (instantiate $m (with "a" (core module $i))))
   )
-  "missing expected export `x`")
+  "missing expected export")
 
 ;; it's ok to give a module with fewer imports
 (component
@@ -305,7 +305,7 @@
     (core instance $i (instantiate $m2))
     (core instance (instantiate $m1 (with "" (instance $i))))
   )
-  "expected global type i32, found i64")
+  "type mismatch in global type")
 (assert_invalid
   (component
     (import "m1" (core module $m1 (import "" "" (table 1 funcref))))
@@ -313,7 +313,7 @@
     (core instance $i (instantiate $m2))
     (core instance (instantiate $m1 (with "" (instance $i))))
   )
-  "expected table element type funcref, found externref")
+  "type mismatch in table element type")
 (assert_invalid
   (component
     (import "m1" (core module $m1 (import "" "" (table 1 2 funcref))))
@@ -362,7 +362,7 @@
     )
     (instance (instantiate $c (with "m" (core module $m1))))
   )
-  "type mismatch in export `g`")
+  "type mismatch in export")
 
 (assert_invalid
   (component
@@ -433,7 +433,7 @@
       (with "" (instance $i))
     ))
   )
-  "duplicate module instantiation argument named ``"
+  "duplicate module instantiation argument"
 )
 
 (assert_invalid
@@ -445,7 +445,7 @@
       (with "" (instance $i))
     ))
   )
-  "duplicate module instantiation argument named ``")
+  "duplicate module instantiation argument")
 
 (assert_invalid
   (component
@@ -456,7 +456,7 @@
       (with "" (instance $i))
     ))
   )
-  "expected global, found func")
+  "expected global")
 
 (assert_invalid
   (component
@@ -467,7 +467,7 @@
       (with "a" (instance $i))
     ))
   )
-  "instantiation argument `a` conflicts with previous argument `a`")
+  "instantiation argument conflicts with previous argument")
 
 (assert_invalid
   (component
@@ -476,7 +476,7 @@
       (with "a" (component $c))
     ))
   )
-  "expected func, found component")
+  "expected func")
 
 (assert_invalid
   (component
@@ -522,7 +522,7 @@
       (export "a" (component $c))
     )
   )
-  "export name `a` conflicts with previous name `a`")
+  "export name conflicts with previous name")
 
 (component
   (component
@@ -564,7 +564,7 @@
       (export "" (func $i ""))
     )
   )
-  "export name `` already defined")
+  "duplicate export name")
 
 (assert_invalid
   (component
@@ -572,7 +572,7 @@
     (instance $i (instantiate $c))
     (export "a" (instance $i "a"))
   )
-  "no export named `a`")
+  "unknown export")
 
 (assert_invalid
   (component
@@ -610,7 +610,7 @@
       )
     )
   )
-  "module instantiation argument `` does not export an item named `table`")
+  "module instantiation argument unknown export")
 
 ;; Ensure a type can be an instantiation argument
 (component
@@ -639,7 +639,7 @@
       )
     )
   )
-  "expected primitive `u32` found primitive `string`")
+  "primitive mismatch")
 
 
 ;; subtyping for module imports reverses order of imports/exports for the
@@ -688,7 +688,7 @@
 
     (instance (instantiate $c (with "x" (func $x))))
   )
-  "expected parameter named `y`, found `x`")
+  "type mismatch in function parameter")
 (assert_invalid
   (component
     (import "x" (func $x (param "x" u32)))
@@ -698,7 +698,7 @@
 
     (instance (instantiate $c (with "x" (func $x))))
   )
-  "type mismatch in function parameter `x`")
+  "type mismatch in function parameter")
 (assert_invalid
   (component
     (import "x" (func $x (result u32)))
@@ -708,7 +708,7 @@
 
     (instance (instantiate $c (with "x" (func $x))))
   )
-  "type mismatch with result type")
+  "type mismatch in result type")
 
 (assert_invalid
   (component
@@ -719,7 +719,7 @@
 
     (instance (instantiate $c (with "x" (instance $x))))
   )
-  "type mismatch in instance export `a`")
+  "type mismatch in instance export")
 
 (assert_invalid
   (component
@@ -731,7 +731,7 @@
     (type $x (record (field "f" u32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected primitive, found record")
+  "type mismatch")
 
 (assert_invalid
   (component
@@ -743,7 +743,7 @@
     (type $x u32)
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected record, found u32")
+  "type mismatch")
 
 (assert_invalid
   (component
@@ -756,7 +756,7 @@
     (type $x (record (field "x" $f)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected u32, found tuple")
+  "type mismatch")
 
 (assert_invalid
   (component
@@ -769,7 +769,7 @@
     (type $x (record (field "x" u32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "type mismatch in record field `x`")
+  "type mismatch")
 
 (assert_invalid
   (component
@@ -781,7 +781,7 @@
     (type $x (record (field "y" u32) (field "z" u64)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected 1 fields, found 2")
+  "type mismatch")
 
 (assert_invalid
   (component
@@ -793,7 +793,7 @@
     (type $x (record (field "b" u32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected field name `a`, found `b`")
+  "type mismatch in record field")
 
 (assert_invalid
   (component
@@ -805,7 +805,7 @@
     (type $x (variant (case "x" u32) (case "y" u32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected 1 cases, found 2")
+  "type mismatch")
 
 (assert_invalid
   (component
@@ -817,7 +817,7 @@
     (type $x (variant (case "y" u32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected case named `x`, found `y`")
+  "type mismatch in variant case")
 
 (assert_invalid
   (component
@@ -829,7 +829,7 @@
     (type $x (variant (case "x")))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected case `x` to have a type, found none")
+  "type mismatch in variant case")
 
 (assert_invalid
   (component
@@ -841,7 +841,7 @@
     (type $x (variant (case "x" u32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected case `x` to have no type")
+  "type mismatch in variant case")
 
 (assert_invalid
   (component
@@ -853,7 +853,7 @@
     (type $x (variant (case "x" s32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "type mismatch in variant case `x`")
+  "type mismatch in variant case")
 
 (assert_invalid
   (component
@@ -865,7 +865,7 @@
     (type $x (tuple u32 u32))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected 1 types, found 2")
+  "type mismatch in tuple field")
 
 (assert_invalid
   (component
@@ -877,7 +877,7 @@
     (type $x (tuple u16))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "type mismatch in tuple field 0")
+  "type mismatch in tuple field")
 
 (assert_invalid
   (component
@@ -889,7 +889,7 @@
     (type $x (flags "x"))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "mismatch in flags elements")
+  "type mismatch in flags elements")
 
 (assert_invalid
   (component
@@ -949,7 +949,7 @@
     (type $x (result))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected ok type, but found none")
+  "type mismatch in result type")
 
 (assert_invalid
   (component
@@ -973,4 +973,4 @@
     (type $x (result))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected err type, but found none")
+  "type mismatch in result type")

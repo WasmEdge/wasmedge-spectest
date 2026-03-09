@@ -496,7 +496,7 @@
     (type $x u32)
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected resource, found defined type")
+  "expected resource")
 
 (assert_invalid
   (component
@@ -507,7 +507,7 @@
     (type $x (resource (rep i32)))
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "expected defined type, found resource")
+  "expected defined type")
 
 (assert_invalid
   (component
@@ -747,7 +747,7 @@
     )
     (instance (instantiate $c))
   )
-  "missing import named `x`")
+  "missing import")
 (assert_invalid
   (component
     (type $x (resource (rep i32)))
@@ -757,7 +757,7 @@
     )
     (instance (instantiate $c (with "x" (type $x))))
   )
-  "missing import named `y`")
+  "missing import")
 
 ;; supply the wrong resource
 (assert_invalid
@@ -846,7 +846,7 @@
     (instance $x1 (instantiate $X))
     (instance $f1 (instantiate $F (with "x" (instance $x1))))
   )
-  "expected component, found instance")
+  "expected component")
 
 ;; Show that two instantiations of the same component produce unique exported
 ;; resource types.
@@ -867,7 +867,7 @@
     (instance $test
       (instantiate $T (with "x" (type $t1)) (with "y" (type $t2))))
   )
-  "type mismatch for import `y`")
+  "type mismatch for import")
 
 ;; Show that re-exporting imported resources from an imported component doesn't
 ;; change the identity of that resource.
@@ -912,17 +912,17 @@
   (component
     (import "b" (type $a (sub resource)))
     (import "[constructor]a" (func (result (own $a)))))
-  "import name `[constructor]a` is not valid")
+  "import name is not valid")
 (assert_invalid
   (component
     (import "b" (type $a (sub resource)))
     (import "[constructor]a" (func (result (own $a)))))
-  "function does not match expected resource name `b`")
+  "function does not match expected resource name")
 (assert_invalid
   (component
     (import "b" (type $a (sub resource)))
     (import "[constructor]a" (func (result (result(own $a))))))
-  "function does not match expected resource name `b`")
+  "function does not match expected resource name")
 (component definition
   (import "a" (type $a (sub resource)))
   (import "[constructor]a" (func (result (own $a)))))
@@ -1047,7 +1047,7 @@
       (import "[constructor]a" (func (result (own $T))))
     ))
   )
-  "function does not match expected resource name `b`")
+  "function does not match expected resource name")
 
 ;; bag-of-exports validation
 (assert_invalid

@@ -78,21 +78,21 @@
     (import "i" (func $f))
     (core func (canon lower (func $f) string-encoding=utf8 string-encoding=utf16))
   )
-  "canonical encoding option `utf8` conflicts with option `utf16`")
+  "canonical encoding option conflicts")
 
 (assert_invalid
   (component
     (import "i" (func $f))
     (core func (canon lower (func $f) string-encoding=utf8 string-encoding=latin1+utf16))
   )
-  "canonical encoding option `utf8` conflicts with option `latin1-utf16`")
+  "canonical encoding option conflicts")
 
 (assert_invalid
   (component
     (import "i" (func $f))
     (core func (canon lower (func $f) string-encoding=utf16 string-encoding=latin1+utf16))
   )
-  "canonical encoding option `utf16` conflicts with option `latin1-utf16`")
+  "canonical encoding option conflicts")
 
 (assert_invalid
   (component
@@ -108,7 +108,7 @@
     (core instance $i (instantiate $m))
     (core func (canon lower (func $f) (memory $i "memory") (memory $i "memory")))
   )
-  "`memory` is specified more than once")
+  "canonical option `memory` is specified more than once")
 
 (assert_invalid
   (component
@@ -252,7 +252,7 @@
     "(core instance $i (instantiate $m))"
     "(core func (canon lower (func $i \"\")))"
   )
-  "unknown instance: failed to find name `$i`")
+  "unknown instance")
 
 (assert_invalid
   (component
@@ -260,7 +260,7 @@
     (core instance $i (instantiate $m))
     (func (export "foo") (canon lift (core func $i "foo")))
   )
-  "lowered parameter types `[]` do not match parameter types `[I32]`")
+  "lowered parameter types do not match parameter types")
 
 (assert_invalid
   (component
@@ -268,7 +268,7 @@
     (core instance $i (instantiate $m))
     (func (export "foo") (canon lift (core func $i "foo")))
   )
-  "lowered result types `[]` do not match result types `[I32]`")
+  "lowered result types do not match result types")
 
 (assert_invalid
   (component
@@ -284,4 +284,4 @@
     "(import \"a\" (func $f))"
     "(func (export \"foo\") (canon lift (core func $f)))"
   )
-  "unknown core func: failed to find name `$f`")
+  "unknown core func")

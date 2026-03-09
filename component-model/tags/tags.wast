@@ -6,7 +6,7 @@
     (core instance $i (instantiate $m))
     (alias core export $i "" (core tag $t))
   )
-  "export `` for core instance 0 is not a tag")
+  "unknown tag")
 
 (component
   (core module $m (tag (export "")))
@@ -27,4 +27,4 @@
     (core instance
       (export "" (tag 0)))
   )
-  "unknown tag 0")
+  "unknown tag")

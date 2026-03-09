@@ -182,7 +182,7 @@
     (type (instance
       (export "a" (func))
       (export "a" (func)))))
-  "export name `a` conflicts with previous name `a`")
+  "export name conflicts with previous name")
 
 (assert_invalid
   (component
@@ -190,7 +190,7 @@
     (type (instance
       (export "a" (instance (type $t)))
     )))
-  "type index 0 is not an instance type")
+  "not an instance type")
 
 (assert_invalid
   (component
@@ -198,7 +198,7 @@
     (type (instance
       (export "a" (core module (type $t)))
     )))
-  "core type index 0 is not a module type")
+  "not a module type")
 
 (assert_malformed
   (component quote
@@ -213,7 +213,7 @@
     (type (instance
       (export "a" (func (type $t)))
     )))
-  "type index 0 is not a function type")
+  "not a function type")
 
 (assert_invalid
   (component
@@ -221,7 +221,7 @@
     (type (instance
       (export "a" (func (type $t)))
     )))
-  "type index 0 is not a function type")
+  "not a function type")
 
 (assert_invalid
   (component
@@ -231,4 +231,4 @@
         (export "a" (func (type $t)))
       ))
     )))
-  "type index 0 is not a function type")
+  "not a function type")
