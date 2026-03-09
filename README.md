@@ -62,7 +62,6 @@
 * `threads/atomic_wait_notify/atomic_wait_notify.wast`: line 73: remove the thread tests.
   * The S-Expression of threads cannot be parsed by wabt, therefore remove them.
 * Trap messages modification for component-model tests (<https://github.com/WasmEdge/WasmEdge/pull/4666>):
-* Unified error messages for component-model tests to remove implementation-specific values:
   * `component-model/adapt/adapt.wast` line 81: `` canonical encoding option `utf8` conflicts with option `utf16` `` -> `canonical encoding option conflicts`
   * `component-model/adapt/adapt.wast` line 88: `` canonical encoding option `utf8` conflicts with option `latin1-utf16` `` -> `canonical encoding option conflicts`
   * `component-model/adapt/adapt.wast` line 95: `` canonical encoding option `utf16` conflicts with option `latin1-utf16` `` -> `canonical encoding option conflicts`
@@ -88,7 +87,7 @@
   * `component-model/import/import.wast` line 48, 56: `` duplicate import name `:` `` -> `duplicate import name`
   * `component-model/import/import.wast` line 64, 72: `` duplicate import name `:a` `` -> `duplicate import name`
   * `component-model/import/import.wast` line 79, 88: `` import name `a` conflicts with previous name `a` `` -> `import name conflicts with previous name`
-  * `component-model/import/import.wast` line 126, 129, 202, 205, 208, 211, 214, 240, 243, 246, 249, 252: `` `` is not in kebab case `` -> `not in kebab case`
+  * `component-model/import/import.wast` line 126, 129, 202, 205, 208, 211, 214, 240, 243, 246, 249, 252: ``` `` is not in kebab case ``` -> `not in kebab case`
   * `component-model/import/import.wast` line 138: `` `wasi/http` is not in kebab case `` -> `not in kebab case`
   * `component-model/import/import.wast` line 141: `` `TyPeS` is not in kebab case `` -> `not in kebab case`
   * `component-model/import/import.wast` line 144: `` `WaSi` is not in kebab case `` -> `not in kebab case`
@@ -102,7 +101,7 @@
   * `component-model/import/import.wast` line 217: `` expected `{` at `>` `` -> `` expected `{` ``
   * `component-model/import/import.wast` line 223: `` `xyz` is not a valid semver `` -> `not a valid semver`
   * `component-model/import/import.wast` line 226: `` `1.2.3 >=2.3.4` is not a valid semver `` -> `not a valid semver`
-  * `component-model/import/import.wast` line 255, 261: `` expected `>` at `` `` -> `` expected `>` ``
+  * `component-model/import/import.wast` line 255, 261: ``` expected `>` at `` ``` -> `` expected `>` ``
   * `component-model/import/import.wast` line 267: `` trailing characters found: `x` `` -> `trailing characters found`
   * `component-model/instance-types/instance-type.wast` line 185: `` export name `a` conflicts with previous name `a` `` -> `export name conflicts with previous name`
   * `component-model/instance-types/instance-type.wast` line 193: `type index 0 is not an instance type` -> `not an instance type`
@@ -118,13 +117,13 @@
   * `component-model/instantiate/instantiate.wast` line 308: `expected global type i32, found i64` -> `type mismatch in global type`
   * `component-model/instantiate/instantiate.wast` line 316: `expected table element type funcref, found externref` -> `type mismatch in table element type`
   * `component-model/instantiate/instantiate.wast` line 365: `` type mismatch in export `g` `` -> `type mismatch in export`
-  * `component-model/instantiate/instantiate.wast` line 436, 448: `` duplicate module instantiation argument named `` `` -> `duplicate module instantiation argument`
+  * `component-model/instantiate/instantiate.wast` line 436, 448: ``` duplicate module instantiation argument named `` ``` -> `duplicate module instantiation argument`
   * `component-model/instantiate/instantiate.wast` line 459: `expected global, found func` -> `expected global`
   * `component-model/instantiate/instantiate.wast` line 470: `` instantiation argument `a` conflicts with previous argument `a` `` -> `instantiation argument conflicts with previous argument`
   * `component-model/instantiate/instantiate.wast` line 525: `` export name `a` conflicts with previous name `a` `` -> `export name conflicts with previous name`
-  * `component-model/instantiate/instantiate.wast` line 567: `` export name `` already defined `` -> `duplicate export name`
+  * `component-model/instantiate/instantiate.wast` line 567: ``` export name `` already defined ``` -> `duplicate export name`
   * `component-model/instantiate/instantiate.wast` line 575: `` no export named `a` `` -> `unknown export`
-  * `component-model/instantiate/instantiate.wast` line 613: `` module instantiation argument `` does not export an item named `table` `` -> `module instantiation argument unknown export`
+  * `component-model/instantiate/instantiate.wast` line 613: ``` module instantiation argument `` does not export an item named `table` ``` -> `module instantiation argument unknown export`
   * `component-model/instantiate/instantiate.wast` line 642: `` expected primitive `u32` found primitive `string` `` -> `primitive mismatch`
   * `component-model/instantiate/instantiate.wast` line 691: `` expected parameter named `y`, found `x` `` -> `type mismatch in function parameter`
   * `component-model/instantiate/instantiate.wast` line 701: `` type mismatch in function parameter `x` `` -> `type mismatch in function parameter`
@@ -172,7 +171,7 @@
   * `component-model/resources/resources.wast` line 870: `` type mismatch for import `y` `` -> `type mismatch for import`
   * `component-model/resources/resources.wast` line 915: `` import name `[constructor]a` is not valid `` -> `import name is not valid`
   * `component-model/resources/resources.wast` line 920, 925, 1050: `` function does not match expected resource name `b` `` -> `function does not match expected resource name`
-  * `component-model/tags/tags.wast` line 9: `` export `` for core instance 0 is not a tag `` -> `unknown tag`
+  * `component-model/tags/tags.wast` line 9: ``` export `` for core instance 0 is not a tag ``` -> `unknown tag`
   * `component-model/tags/tags.wast` line 30: `unknown tag 0` -> `unknown tag`
   * `component-model/types/types.wast` line 8, 49: `type index 0 is not a function type` -> `unknown function type`
   * `component-model/types/types.wast` line 15, 40: `core type index 0 is not a module type` -> `unknown module type`
@@ -181,7 +180,7 @@
   * `component-model/types/types.wast` line 112: `` export name `A` conflicts with previous name `a` `` -> `conflicts with previous export name`
   * `component-model/types/types.wast` line 121: `` import name `a` conflicts with previous name `A` `` -> `conflicts with previous import name`
   * `component-model/types/types.wast` line 165, 217: `invalid outer alias count of 100` -> `invalid outer alias count`
-  * `component-model/types/types.wast` line 177, 229: `` name `` already defined `` -> `duplicate export name`
+  * `component-model/types/types.wast` line 177, 229: ``` name `` already defined ``` -> `duplicate export name`
   * `component-model/types/types.wast` line 194: `` export name `FOO-bar-BAZ` conflicts with previous name `foo-BAR-baz` `` -> `conflicts with previous export name`
   * `component-model/types/types.wast` line 368: `type index 0 is a module type` -> `unknown module type`
 
@@ -189,6 +188,7 @@
 
 ### Active Tags
 
+* `wasm-core-20260301`: The test suite in the date 2026/03/01 from the WASM spec and proposals.
 * `wasm-core-20251216`: The test suite in the date 2025/12/16 from the WASM spec and proposals.
 * `wasm-core-20251029`: The test suite in the date 2025/10/29 from the WASM spec and proposals.
 * `wasm-core-20250217`: The test suite in the date 2025/02/17 from the WASM spec and proposals.
