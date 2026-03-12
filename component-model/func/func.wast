@@ -132,7 +132,7 @@
     "\00"             ;; 0 parameters
     "\01\01"          ;; invalid result encoding
   )
-  "invalid leading byte (0x1) for number of results")
+  "malformed defined type")
 
 (assert_malformed
   (component binary
@@ -143,4 +143,4 @@
     "\00"             ;; 0 parameters
     "\02\00"          ;; invalid result encoding
   )
-  "invalid leading byte (0x2) for component function results")
+  "malformed defined type")
