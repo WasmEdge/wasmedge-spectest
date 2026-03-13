@@ -8,4 +8,4 @@
     "\0b\01\00" ;; data section, 1 byte, 0 entries
     "\01\01\00" ;; type section, 1 byte, 0 entries
   )
-  "unexpected content after last section")
+  "section out of order")
