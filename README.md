@@ -37,30 +37,40 @@
 
 ## Whats Difference
 
+### Trap Messages Changes
+
 * `wasm-2.0/select/select.wast` line 325: `invalid result arity` -> `type mismatch`
   * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
 * `wasm-3.0/select/select.wast` line 369: `invalid result arity` -> `type mismatch`
   * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
-* `wasm-3.0/instance` folder moved to `wasm-3.0-exceptions`
-  * Temporary move this test set to the exception handling folder until the implementation of exception-handling proposal of AOT/JIT finished in WasmEdge.
 * Updated the error message text for old tests
   * Update the `global is immutable` to `immutable global` according to the newest test suite.
     * `wasm-1.0/global/global.wast` line 244
     * `wasm-2.0/global/global.wast` line 274, 279
-* New S-Expression script not supported by [wabt](https://github.com/WebAssembly/wabt)
-  * module definition: add a new `"module_definition"` type in commands array in JSON which has the same content structure as `"module"`.
-    * `wasm-3.0/instance/instance.wast` line 3, 109
-    * `wasm-3.0/memory/memory.wast` line 8
-    * `wasm-3.0/table/table.wast` line 9
-    * `wasm-3.0-memory64/memory64/memory64.wast` line 8
-    * `wasm-3.0-memory64/table64/table64.wast` line 9
-  * module instance: add a new `"module_instance"` type in commands array in JSON which has almost the same content structure as `"register"`, but use the `"definition"` to present the name of module definition source.
-    * `wasm-3.0/instance/instance.wast` line 10, 11, 125
-* `threads/atomic/atomic.wast`: divergence behavior
-  * Please check [this issue](https://github.com/WebAssembly/threads/issues/195).
-  * Modified the `wast` file for fitting the `compare_exchange_strong` behavior in C++.
+
+### Test Cases Removals
+
+* `wasm-3.0/instance` folder moved to `wasm-3.0-exceptions`
+  * Temporary move this test set to the exception handling folder until the implementation of exception-handling proposal of AOT/JIT finished in WasmEdge.
 * `threads/atomic_wait_notify/atomic_wait_notify.wast`: line 73: remove the thread tests.
   * The S-Expression of threads cannot be parsed by wabt, therefore remove them.
+
+### New S-Expression Grammar
+
+* New S-Expression script not supported by [wabt](https://github.com/WebAssembly/wabt)
+* module definition: add a new `"module_definition"` type in commands array in JSON which has the same content structure as `"module"`.
+  * `wasm-3.0/instance/instance.wast` line 3, 109
+  * `wasm-3.0/memory/memory.wast` line 8
+  * `wasm-3.0/table/table.wast` line 9
+  * `wasm-3.0-memory64/memory64/memory64.wast` line 8
+  * `wasm-3.0-memory64/table64/table64.wast` line 9
+* module instance: add a new `"module_instance"` type in commands array in JSON which has almost the same content structure as `"register"`, but use the `"definition"` to present the name of module definition source.
+  * `wasm-3.0/instance/instance.wast` line 10, 11, 125
+
+### Component-Model Spec Tests Related Changes
+
+* Remove tests in old spec
+  * `component-model/import/import.wast` line 345
 * Trap messages modification for component-model tests (<https://github.com/WasmEdge/WasmEdge/pull/4666>):
   * `component-model/adapt/adapt.wast` line 81: `` canonical encoding option `utf8` conflicts with option `utf16` `` -> `canonical encoding option conflicts`
   * `component-model/adapt/adapt.wast` line 88: `` canonical encoding option `utf8` conflicts with option `latin1-utf16` `` -> `canonical encoding option conflicts`
@@ -188,6 +198,7 @@
 
 ### Active Tags
 
+* `wasm-core-20260316`: The test suite in the date 2026/03/16 from the WASM spec and proposals.
 * `wasm-core-20260301`: The test suite in the date 2026/03/01 from the WASM spec and proposals.
 * `wasm-core-20251216`: The test suite in the date 2025/12/16 from the WASM spec and proposals.
 * `wasm-core-20251029`: The test suite in the date 2025/10/29 from the WASM spec and proposals.
