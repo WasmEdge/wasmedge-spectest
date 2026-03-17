@@ -1,5 +1,3 @@
 {"source_filename": "wrong-order.wast",
  "commands": [
-  {"type": "assert_malformed", "line": 4, "filename": "wrong-order.0.wasm", "module_type": "binary", "text": "section out of order"}
- ]
-}
+  {"type": "assert_malformed", "line": 4, "filename": "wrong-order.0.wasm", "text": "section out of order", "module_type": "binary"}]}

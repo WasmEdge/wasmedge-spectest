@@ -1,5 +1,3 @@
 {"source_filename": "big.wast",
  "commands": [
-  {"type": "module_definition", "line": 3, "filename": "big.0.wasm", "module_type": "binary"}
- ]
-}
+  {"type": "module_definition", "line": 3, "filename": "big.0.wasm", "module_type": "binary"}]}

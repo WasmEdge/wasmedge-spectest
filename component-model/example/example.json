@@ -1,5 +1,3 @@
 {"source_filename": "example.wast",
  "commands": [
-  {"type": "module", "line": 5, "filename": "example.0.wasm", "module_type": "binary"}
- ]
-}
+  {"type": "module", "line": 5, "filename": "example.0.wasm", "module_type": "binary"}]}
