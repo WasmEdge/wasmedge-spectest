@@ -1,0 +1,19 @@
+{"source_filename": "nested.wast",
+ "commands": [
+  {"type": "module", "line": 1, "name": "$Mem", "filename": "nested.0.wasm"}, 
+  {"type": "register", "line": 5, "name": "$Mem", "as": "mem"}, 
+  {"type": "thread", "line": 7, "name": "$T1", "shared": [{"module": "$Mem"}], "commands": [
+    {"type": "register", "line": 8, "name": "$Mem", "as": "mem"}, 
+    {"type": "module", "line": 9, "filename": "nested.1.wasm"}, 
+    {"type": "thread", "line": 21, "name": "$T11", "shared": [{"module": "$Mem"}], "commands": [
+      {"type": "register", "line": 22, "name": "$Mem", "as": "mem"}, 
+      {"type": "module", "line": 23, "filename": "nested.2.wasm"}, 
+      {"type": "action", "line": 29, "action": {"type": "invoke", "field": "run_inner", "args": []}, "expected": []}]}, 
+    {"type": "wait", "line": 32, "thread": "$T11"}, 
+    {"type": "action", "line": 33, "action": {"type": "invoke", "field": "run", "args": []}, "expected": []}]}, 
+  {"type": "thread", "line": 36, "name": "$T2", "shared": [{"module": "$Mem"}], "commands": [
+    {"type": "register", "line": 37, "name": "$Mem", "as": "mem"}, 
+    {"type": "module", "line": 38, "filename": "nested.3.wasm"}, 
+    {"type": "action", "line": 50, "action": {"type": "invoke", "field": "run", "args": []}, "expected": []}]}, 
+  {"type": "wait", "line": 53, "thread": "$T1"}, 
+  {"type": "wait", "line": 54, "thread": "$T2"}]}

@@ -1,0 +1,11 @@
+{"source_filename": "simple.wast",
+ "commands": [
+  {"type": "module", "line": 1, "name": "$Mem", "filename": "simple.0.wasm"}, 
+  {"type": "register", "line": 4, "as": "mem"}, 
+  {"type": "thread", "line": 6, "name": "$T1", "shared": [{"module": "$Mem"}], "commands": [
+    {"type": "register", "line": 7, "name": "$Mem", "as": "mem"}, 
+    {"type": "module", "line": 8, "filename": "simple.1.wasm"}, 
+    {"type": "action", "line": 14, "action": {"type": "invoke", "field": "run", "args": []}, "expected": []}]}, 
+  {"type": "wait", "line": 18, "thread": "$T1"}, 
+  {"type": "module", "line": 20, "name": "$Check", "filename": "simple.2.wasm"}, 
+  {"type": "assert_return", "line": 29, "action": {"type": "invoke", "module": "$Check", "field": "check", "args": []}, "expected": [{"type": "i32", "value": "1"}]}]}

@@ -1,0 +1,9 @@
+{"source_filename": "unlinkable.wast",
+ "commands": [
+  {"type": "module", "line": 1, "name": "$Mem", "filename": "unlinkable.0.wasm"}, 
+  {"type": "thread", "line": 5, "name": "$T2", "shared": [], "commands": [
+    {"type": "assert_unlinkable", "line": 6, "filename": "unlinkable.1.wasm", "text": "unknown import", "module_type": "binary"}]}, 
+  {"type": "wait", "line": 12, "thread": "$T2"}, 
+  {"type": "thread", "line": 14, "name": "$T4", "shared": [{"module": "$Mem"}], "commands": [
+    {"type": "assert_unlinkable", "line": 15, "filename": "unlinkable.2.wasm", "text": "unknown import", "module_type": "binary"}]}, 
+  {"type": "wait", "line": 21, "thread": "$T4"}]}
