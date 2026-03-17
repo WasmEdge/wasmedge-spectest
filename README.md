@@ -1,14 +1,14 @@
 # Introduction
 
-**WasmEdge-spectest** is a repository of spec test data by extracting WebAssembly (WASM) test suites.
+**WasmEdge-spectest** is a repository of spec test data extracted from WebAssembly (WASM) test suites.
 
-* Test data is from [WebAssembly Core Tests](https://github.com/WebAssembly/spec/tree/master/test/core) and tests from every proposals.
+* Test data is from [WebAssembly Core Tests](https://github.com/WebAssembly/spec/tree/master/test/core) and tests from each proposal.
 
-* [S-Expression script](https://github.com/WebAssembly/spec/blob/main/interpreter/README.md#scripts) of tests are extracted into `json` and `wasm` files by [wast2json](https://webassembly.github.io/wabt/doc/wast2json.1.html) tool in [wabt](https://github.com/WebAssembly/wabt).
+* [S-Expression scripts](https://github.com/WebAssembly/spec/blob/main/interpreter/README.md#scripts) of tests are extracted into `json` and `wasm` files by the [wast2json](https://webassembly.github.io/wabt/doc/wast2json.1.html) tool in [wabt](https://github.com/WebAssembly/wabt).
 
-* For those WASM text format not supported by [wabt](https://github.com/WebAssembly/wabt) currently, parsing and converting into binary files are credited by [wasm-tools](https://github.com/bytecodealliance/wasm-tools).
+* For WASM text formats not currently supported by [wabt](https://github.com/WebAssembly/wabt), parsing and conversion into binary files is done by [wasm-tools](https://github.com/bytecodealliance/wasm-tools).
 
-* For the [Component Model](https://github.com/WebAssembly/component-model) tests, the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools) is used for extracting into `json` and `wasm` files.
+* For the [Component Model](https://github.com/WebAssembly/component-model) tests, the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools) is used to extract `json` and `wasm` files.
 
 ## Folders
 
@@ -26,52 +26,137 @@
   * [Extended Constant Expressions](https://github.com/WebAssembly/extended-const)
   * [Typed Function References](https://github.com/WebAssembly/function-references)
   * [Garbage collection](https://github.com/WebAssembly/gc)
-  * [Memory64](https://github.com/WebAssembly/memory64) (Temorary not added due to unimplementation in WasmEdge)
+  * [Memory64](https://github.com/WebAssembly/memory64)
   * [Multiple memories](https://github.com/WebAssembly/multi-memory)
   * [Relaxed SIMD](https://github.com/WebAssembly/relaxed-simd)
   * [Tail call](https://github.com/WebAssembly/tail-call)
-* `threads`: The tests of the [Threads](https://github.com/webassembly/threads) proposal.
-* `exception-handling-legacy`: The legacy version tests of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal.
+* `threads`: The tests for the [Threads](https://github.com/WebAssembly/threads) proposal.
+* `exception-handling-legacy`: The legacy version of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal tests.
   * This is deprecated.
-* `component-model`: The tests of the [Component Model](https://github.com/WebAssembly/component-model) proposal.
+* `component-model`: The tests for the [Component Model](https://github.com/WebAssembly/component-model) proposal.
 
-## Whats Difference
+## Tags
 
-### Trap Messages Changes
+### Active Tags
+
+* `wasm-core-20260316`: The test suite dated 2026/03/16 from the WASM spec and proposals
+* `wasm-core-20260301`: The test suite dated 2026/03/01 from the WASM spec and proposals
+* `wasm-core-20251216`: The test suite dated 2025/12/16 from the WASM spec and proposals
+* `wasm-core-20251029`: The test suite dated 2025/10/29 from the WASM spec and proposals
+* `wasm-core-20250217`: The test suite dated 2025/02/17 from the WASM spec and proposals
+
+### Older Tags
+
+* This repo was moved from the old spec test repo. For older tags and history, please refer to the [WasmEdge-unittest repo](https://github.com/second-state/WasmEdge-unittest).
+  * `wasm-core-20240217`: The test suite dated 2024/02/17 from the WASM spec
+  * `wasm-core-20231026`: The test suite dated 2023/10/26 from the WASM spec
+  * `wasm-core-20230511`: The test suite dated 2023/05/11 from the WASM spec
+  * `wasm-core-20221215`: The test suite dated 2022/12/15 from the WASM spec
+  * `wasm-core-20221026`: The test suite dated 2022/10/26 from the WASM spec
+  * `wasm-core-20220712`: The test suite dated 2022/07/12 from the WASM spec
+  * `wasm-core-20220504`: The test suite dated 2022/05/04 from the WASM spec
+  * `wasm-core-20220223`: The test suite dated 2022/02/23 from the WASM spec
+  * `wasm-core-20211214`: The test suite dated 2021/12/14 from the WASM spec
+  * `wasm-core-20211119`: The test suite dated 2021/11/19 from the WASM spec
+  * `wasm-core-20210414`: The test suite dated 2021/04/14 from the WASM spec
+
+## Differences
+
+### Trap Message Changes
 
 * `wasm-2.0/select/select.wast` line 325: `invalid result arity` -> `type mismatch`
-  * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
+  * This error message is for the WAT format; the WASM format cannot detect this error from the bytecode.
 * `wasm-3.0/select/select.wast` line 369: `invalid result arity` -> `type mismatch`
-  * This error message is for the WAT format, WASM format cannot detect this error by the bytecode.
-* Updated the error message text for old tests
-  * Update the `global is immutable` to `immutable global` according to the newest test suite.
+  * This error message is for the WAT format; the WASM format cannot detect this error from the bytecode.
+* Updated error message text for older tests
+  * Changed `global is immutable` to `immutable global` according to the latest test suite.
     * `wasm-1.0/global/global.wast` line 244
     * `wasm-2.0/global/global.wast` line 274, 279
 
-### Test Cases Removals
+### Test Case Removals
 
 * `wasm-3.0/instance` folder moved to `wasm-3.0-exceptions`
-  * Temporary move this test set to the exception handling folder until the implementation of exception-handling proposal of AOT/JIT finished in WasmEdge.
-* `threads/atomic_wait_notify/atomic_wait_notify.wast`: line 73: remove the thread tests.
-  * The S-Expression of threads cannot be parsed by wabt, therefore remove them.
+  * Temporarily moved this test set to the exception handling folder until the exception-handling proposal implementation for AOT/JIT is completed in WasmEdge.
 
 ### New S-Expression Grammar
 
-* New S-Expression script not supported by [wabt](https://github.com/WebAssembly/wabt)
-* module definition: add a new `"module_definition"` type in commands array in JSON which has the same content structure as `"module"`.
+The following S-Expression constructs are not supported by [wabt](https://github.com/WebAssembly/wabt). Their corresponding `.json` and `.wasm` files are generated manually or by other tools, with new command types introduced in the JSON format.
+
+#### `"module_definition"` command
+
+A new `"module_definition"` type in the commands array. It has the same structure as `"module"` but represents a module definition that is not automatically instantiated.
+
+* Structure: `{"type": "module_definition", "line": N, "filename": "X.wasm"}`
+* Used in:
   * `wasm-3.0/instance/instance.wast` line 3, 109
   * `wasm-3.0/memory/memory.wast` line 8
   * `wasm-3.0/table/table.wast` line 9
   * `wasm-3.0-memory64/memory64/memory64.wast` line 8
   * `wasm-3.0-memory64/table64/table64.wast` line 9
-* module instance: add a new `"module_instance"` type in commands array in JSON which has almost the same content structure as `"register"`, but use the `"definition"` to present the name of module definition source.
+
+#### `"module_instance"` command
+
+A new `"module_instance"` type in the commands array. It has a similar structure to `"register"`, but uses the `"definition"` field to reference the source module definition by name.
+
+* Structure: `{"type": "module_instance", "line": N, "name": "$inst", "definition": "$def"}`
+* Used in:
   * `wasm-3.0/instance/instance.wast` line 10, 11, 125
 
-### Component-Model Spec Tests Related Changes
+#### `"thread"` command
 
-* Remove tests in old spec
+A new `"thread"` type for the [Threads](https://github.com/WebAssembly/threads) proposal test cases. It represents a concurrent thread of execution containing its own nested commands. Each module within a thread is compiled to a separate `.wasm` file.
+
+* Structure: `{"type": "thread", "line": N, "name": "$T1", "shared": [...], "commands": [...]}`
+  * `"name"`: the thread identifier (e.g. `"$T1"`).
+  * `"shared"`: an array of shared module references from the `(shared (module $ref))` clause. Each entry is `{"module": "$ref"}`. Empty array `[]` when the thread has no `shared` clause.
+  * `"commands"`: a nested array of standard commands (`module`, `register`, `action`, `assert_return`, `assert_unlinkable`, or nested `thread`, etc.) that execute within the thread.
+* Used in:
+  * `threads/simple/simple.wast` line 6
+  * `threads/thread/thread.wast` line 6, 17, 41
+  * `threads/wait_notify/wait_notify.wast` line 6, 19
+  * `threads/LB/LB.wast` line 6, 23
+  * `threads/LB_atomic/LB_atomic.wast` line 6, 23
+  * `threads/MP/MP.wast` line 6, 18
+  * `threads/MP_atomic/MP_atomic.wast` line 6, 18
+  * `threads/SB/SB.wast` line 6, 23
+  * `threads/SB_atomic/SB_atomic.wast` line 6, 23
+  * `threads/nested/nested.wast` line 7, 21, 36
+  * `threads/deeply_nested/deeply_nested.wast` line 8, 22, 33, 42, 52, 75
+  * `threads/unlinkable/unlinkable.wast` line 5, 14
+
+#### `"wait"` command
+
+A new `"wait"` type for the [Threads](https://github.com/WebAssembly/threads) proposal test cases. It blocks execution until the referenced thread completes.
+
+* Structure: `{"type": "wait", "line": N, "thread": "$T1"}`
+  * `"thread"`: the name of the thread to wait on.
+* Used in:
+  * `threads/simple/simple.wast` line 18
+  * `threads/thread/thread.wast` line 28, 29, 48
+  * `threads/wait_notify/wait_notify.wast` line 39, 40
+  * `threads/LB/LB.wast` line 41, 42
+  * `threads/LB_atomic/LB_atomic.wast` line 41, 42
+  * `threads/MP/MP.wast` line 38, 39
+  * `threads/MP_atomic/MP_atomic.wast` line 38, 39
+  * `threads/SB/SB.wast` line 41, 42
+  * `threads/SB_atomic/SB_atomic.wast` line 41, 42
+  * `threads/nested/nested.wast` line 32, 53, 54
+  * `threads/deeply_nested/deeply_nested.wast` line 63, 64, 70, 71, 92, 93
+  * `threads/unlinkable/unlinkable.wast` line 12, 21
+
+#### `"either"` expected value
+
+A new `"either"` type used in the `"expected"` array of `"assert_return"` for non-deterministic results in concurrent tests. It indicates the actual result may be any one of the provided alternatives.
+
+* Structure: `{"type": "either", "values": [{"type": "i32", "value": "0"}, {"type": "i32", "value": "42"}]}`
+* Used in:
+  * `threads/thread/thread.wast` line 25
+
+### Component-Model Spec Test Changes
+
+* Removed tests from the old spec
   * `component-model/import/import.wast` line 345
-* Trap messages modification for component-model tests (<https://github.com/WasmEdge/WasmEdge/pull/4666>):
+* Trap message modifications for component-model tests (<https://github.com/WasmEdge/WasmEdge/pull/4666>):
   * `component-model/adapt/adapt.wast` line 81: `` canonical encoding option `utf8` conflicts with option `utf16` `` -> `canonical encoding option conflicts`
   * `component-model/adapt/adapt.wast` line 88: `` canonical encoding option `utf8` conflicts with option `latin1-utf16` `` -> `canonical encoding option conflicts`
   * `component-model/adapt/adapt.wast` line 95: `` canonical encoding option `utf16` conflicts with option `latin1-utf16` `` -> `canonical encoding option conflicts`
@@ -193,28 +278,3 @@
   * `component-model/types/types.wast` line 177, 229: ``` name `` already defined ``` -> `duplicate export name`
   * `component-model/types/types.wast` line 194: `` export name `FOO-bar-BAZ` conflicts with previous name `foo-BAR-baz` `` -> `conflicts with previous export name`
   * `component-model/types/types.wast` line 368: `type index 0 is a module type` -> `unknown module type`
-
-## Tags
-
-### Active Tags
-
-* `wasm-core-20260316`: The test suite in the date 2026/03/16 from the WASM spec and proposals.
-* `wasm-core-20260301`: The test suite in the date 2026/03/01 from the WASM spec and proposals.
-* `wasm-core-20251216`: The test suite in the date 2025/12/16 from the WASM spec and proposals.
-* `wasm-core-20251029`: The test suite in the date 2025/10/29 from the WASM spec and proposals.
-* `wasm-core-20250217`: The test suite in the date 2025/02/17 from the WASM spec and proposals.
-
-### Older Tags
-
-* This repo is moved from the old spec test repo. For older tags and history, please refer to the [WasmEdge-unittest repo](https://github.com/second-state/WasmEdge-unittest).
-  * `wasm-core-20240217`: The test suite in the date 2024/02/17 from the WASM spec.
-  * `wasm-core-20231026`: The test suite in the date 2023/10/26 from the WASM spec.
-  * `wasm-core-20230511`: The test suite in the date 2023/05/11 from the WASM spec.
-  * `wasm-core-20221215`: The test suite in the date 2022/12/15 from the WASM spec.
-  * `wasm-core-20221026`: The test suite in the date 2022/10/26 from the WASM spec.
-  * `wasm-core-20220712`: The test suite in the date 2022/07/12 from the WASM spec.
-  * `wasm-core-20220504`: The test suite in the date 2022/05/04 from the WASM spec.
-  * `wasm-core-20220223`: The test suite in the date 2022/02/23 from the WASM spec.
-  * `wasm-core-20211214`: The test suite in the date 2021/12/14 from the WASM spec.
-  * `wasm-core-20211119`: The test suite in the date 2021/11/19 from the WASM spec.
-  * `wasm-core-20210414`: The test suite in the date 2021/04/14 from the WASM spec.
