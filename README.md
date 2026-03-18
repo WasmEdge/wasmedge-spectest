@@ -176,6 +176,8 @@ A new `"either"` type used in the `"expected"` array of `"assert_return"` for no
   * `component-model/definedtypes/definedtypes.wast` line 106: `` enum tag name `X` conflicts with previous tag name `x` `` -> `enum tag name conflicts with previous tag name`
   * `component-model/export-ascription/export-ascription.wast` line 44: `` missing expected export `f` `` -> `missing expected export`
   * `component-model/func/func.wast` line 21: `` function parameter name `FOO` conflicts with previous parameter name `foo` `` -> `function parameter name conflicts with previous parameter name`
+  * `component-model/func/func.wast` line 135: `` invalid leading byte (0x1) for number of results `` -> `malformed defined type`
+  * `component-model/func/func.wast` line 146: `` invalid leading byte (0x2) for component function results `` -> `malformed defined type`
   * `component-model/import/import.wast` line 24: `type index 0 is not an instance type` -> `unknown instance type`
   * `component-model/import/import.wast` line 31: `core type index 0 is not a module type` -> `unknown module type`
   * `component-model/import/import.wast` line 38: `type index 0 is not a function type` -> `unknown function type`
