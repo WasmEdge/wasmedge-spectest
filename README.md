@@ -39,6 +39,7 @@
 
 ### Active Tags
 
+* `wasm-core-20260322`: The test suite dated 2026/03/22 from the WASM spec and proposals
 * `wasm-core-20260319`: The test suite dated 2026/03/19 from the WASM spec and proposals
 * `wasm-core-20260316`: The test suite dated 2026/03/16 from the WASM spec and proposals
 * `wasm-core-20260301`: The test suite dated 2026/03/01 from the WASM spec and proposals
