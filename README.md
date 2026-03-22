@@ -73,6 +73,8 @@
   * Changed `global is immutable` to `immutable global` according to the latest test suite.
     * `wasm-1.0/global/global.wast` line 244
     * `wasm-2.0/global/global.wast` line 274, 279
+  * Changed `malformed lane index` to `i8 constant out of range` according to the latest test suite.
+    * `wasm-2.0/simd_lane/simd_lane.wast` line 415-428, 521, 525, 604, 608, 612, 616, 620
 
 ### Test Case Removals
 
