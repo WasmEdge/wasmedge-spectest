@@ -9,7 +9,7 @@
   {"type": "thread", "line": 17, "name": "$T2", "shared": [{"module": "$Mem"}], "commands": [
     {"type": "register", "line": 18, "name": "$Mem", "as": "mem"}, 
     {"type": "module", "line": 19, "filename": "thread.2.wasm"}, 
-    {"type": "assert_return", "line": 25, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "either", "values": [{"type": "i32", "value": "0"}, {"type": "i32", "value": "42"}]}]}]}, 
+    {"type": "assert_return", "line": 25, "action": {"type": "invoke", "field": "run", "args": []}, "either": [{"type": "i32", "value": "0"}, {"type": "i32", "value": "42"}]}]}, 
   {"type": "wait", "line": 28, "thread": "$T1"}, 
   {"type": "wait", "line": 29, "thread": "$T2"}, 
   {"type": "module", "line": 32, "filename": "thread.3.wasm"}, 
