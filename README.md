@@ -39,15 +39,19 @@
 
 ### Active Tags
 
-* `wasm-core-20260322`: The test suite dated 2026/03/22 from the WASM spec and proposals
-* `wasm-core-20260319`: The test suite dated 2026/03/19 from the WASM spec and proposals
-* `wasm-core-20260316`: The test suite dated 2026/03/16 from the WASM spec and proposals
-* `wasm-core-20260301`: The test suite dated 2026/03/01 from the WASM spec and proposals
-* `wasm-core-20251216`: The test suite dated 2025/12/16 from the WASM spec and proposals
-* `wasm-core-20251029`: The test suite dated 2025/10/29 from the WASM spec and proposals
-* `wasm-core-20250217`: The test suite dated 2025/02/17 from the WASM spec and proposals
+* `wasm-core-20260326`: Fix SIMD proposal tests
 
 ### Older Tags
+
+* `wasm-core-20260322`: Fix threads and component-model proposal tests
+* `wasm-core-20260319`: Update threads proposal tests and fix component-model proposal tests
+* `wasm-core-20260316`: Fix component-model proposal tests
+* `wasm-core-20260301`: Update test suite to 2026/03/01 and add component-model proposal tests
+* `wasm-core-20251216`: Update test suite to 2025/12/16
+* `wasm-core-20251029`: Update test suite to 2025/10/29 and rename folder names for WASM 3.0
+* `wasm-core-20250217`: The test suite dated 2025/02/17 from the WASM spec and proposals
+
+### Archived Tags
 
 * This repo was moved from the old spec test repo. For older tags and history, please refer to the [WasmEdge-unittest repo](https://github.com/second-state/WasmEdge-unittest).
   * `wasm-core-20240217`: The test suite dated 2024/02/17 from the WASM spec
