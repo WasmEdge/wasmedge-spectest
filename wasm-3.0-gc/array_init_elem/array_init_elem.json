@@ -33,4 +33,6 @@
   {"type": "assert_return", "line": 154, "action": {"type": "invoke", "field": "array_init_elem", "args": [{"type": "i32", "value": "1"}, {"type": "i32", "value": "0"}, {"type": "i32", "value": "1"}]}, "expected": []}, 
   {"type": "assert_return", "line": 155, "action": {"type": "invoke", "field": "array_len_nth", "args": [{"type": "i32", "value": "0"}]}, "expected": [{"type": "i32", "value": "1"}]}, 
   {"type": "assert_return", "line": 156, "action": {"type": "invoke", "field": "array_len_nth", "args": [{"type": "i32", "value": "1"}]}, "expected": [{"type": "i32", "value": "1"}]}, 
-  {"type": "assert_return", "line": 157, "action": {"type": "invoke", "field": "array_eq_elems", "args": [{"type": "i32", "value": "0"}, {"type": "i32", "value": "1"}]}, "expected": [{"type": "i32", "value": "1"}]}]}
+  {"type": "assert_return", "line": 157, "action": {"type": "invoke", "field": "array_eq_elems", "args": [{"type": "i32", "value": "0"}, {"type": "i32", "value": "1"}]}, "expected": [{"type": "i32", "value": "1"}]}, 
+  {"type": "module", "line": 160, "filename": "array_init_elem.5.wasm"}, 
+  {"type": "assert_return", "line": 178, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "i32", "value": "1"}]}]}

@@ -779,4 +779,6 @@
   {"type": "assert_trap", "line": 2124, "action": {"type": "invoke", "field": "test", "args": [{"type": "i32", "value": "13"}]}, "text": "uninitialized element", "expected": [{"type": "i32"}]}, 
   {"type": "assert_trap", "line": 2125, "action": {"type": "invoke", "field": "test", "args": [{"type": "i32", "value": "14"}]}, "text": "uninitialized element", "expected": [{"type": "i32"}]}, 
   {"type": "assert_trap", "line": 2126, "action": {"type": "invoke", "field": "test", "args": [{"type": "i32", "value": "15"}]}, "text": "uninitialized element", "expected": [{"type": "i32"}]}, 
-  {"type": "module", "line": 2128, "filename": "table_init.101.wasm"}]}
+  {"type": "module", "line": 2128, "filename": "table_init.101.wasm"}, 
+  {"type": "module", "line": 2152, "filename": "table_init.102.wasm"}, 
+  {"type": "assert_return", "line": 2166, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "i32", "value": "1"}]}]}

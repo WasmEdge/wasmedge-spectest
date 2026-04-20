@@ -39,10 +39,11 @@
 
 ### Active Tags
 
-* `wasm-core-20260326`: Fix SIMD proposal tests
+* `wasm-core-20260421`: Add tests for segment single-evaluation in `table.init`, `array.init_elem`, and `array.new_elem`
 
 ### Older Tags
 
+* `wasm-core-20260326`: Fix SIMD proposal tests
 * `wasm-core-20260322`: Fix threads and component-model proposal tests
 * `wasm-core-20260319`: Update threads proposal tests and fix component-model proposal tests
 * `wasm-core-20260316`: Fix component-model proposal tests
@@ -164,6 +165,7 @@ A new `"either"` type used in the `"expected"` array of `"assert_return"` for no
 
 * Removed tests from the old spec
   * `component-model/import/import.wast` line 345
+  * `component-model/wrong-order/` all tests, because it's core WASM test and has diverge trap message from WASM spec.
 * Trap message modifications for component-model tests (<https://github.com/WasmEdge/WasmEdge/pull/4666>):
   * `component-model/adapt/adapt.wast` line 81: `` canonical encoding option `utf8` conflicts with option `utf16` `` -> `canonical encoding option conflicts`
   * `component-model/adapt/adapt.wast` line 88: `` canonical encoding option `utf8` conflicts with option `latin1-utf16` `` -> `canonical encoding option conflicts`
