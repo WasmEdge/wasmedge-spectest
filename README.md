@@ -39,10 +39,11 @@
 
 ### Active Tags
 
-* `wasm-core-20260421`: Add tests for segment single-evaluation in `table.init`, `array.init_elem`, and `array.new_elem`
+* `wasm-core-20260708`: Improve test coverage around `data.drop` and `elem.drop`, and add the transitive equivalent subtyping test
 
 ### Older Tags
 
+* `wasm-core-20260421`: Add tests for segment single-evaluation in `table.init`, `array.init_elem`, and `array.new_elem`
 * `wasm-core-20260326`: Fix SIMD proposal tests
 * `wasm-core-20260322`: Fix threads and component-model proposal tests
 * `wasm-core-20260319`: Update threads proposal tests and fix component-model proposal tests

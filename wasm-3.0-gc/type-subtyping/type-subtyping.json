@@ -116,4 +116,5 @@
   {"type": "assert_return", "line": 920, "action": {"type": "invoke", "field": "f3", "args": []}, "expected": [{"type": "f32", "value": "0"}]}, 
   {"type": "assert_return", "line": 921, "action": {"type": "invoke", "field": "f4", "args": []}, "expected": [{"type": "f32", "value": "0"}]}, 
   {"type": "assert_return", "line": 922, "action": {"type": "invoke", "field": "f5", "args": []}, "expected": [{"type": "f32", "value": "0"}]}, 
-  {"type": "assert_return", "line": 923, "action": {"type": "invoke", "field": "f6", "args": []}, "expected": [{"type": "f32", "value": "0"}]}]}
+  {"type": "assert_return", "line": 923, "action": {"type": "invoke", "field": "f6", "args": []}, "expected": [{"type": "f32", "value": "0"}]}, 
+  {"type": "module", "line": 927, "filename": "type-subtyping.77.wasm"}]}
