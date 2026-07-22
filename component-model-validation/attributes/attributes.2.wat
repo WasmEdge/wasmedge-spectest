@@ -1,0 +1,1 @@
+(component(import "a" (implements "\zz") (instance)) )

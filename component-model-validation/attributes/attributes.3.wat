@@ -1,0 +1,1 @@
+(component(import "a" (external-id "\zz") (func)) )

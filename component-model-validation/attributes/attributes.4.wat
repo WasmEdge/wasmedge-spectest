@@ -1,0 +1,1 @@
+(component(import "a" (implements "a:b/c") (implements "a:b/c") (instance)) )
