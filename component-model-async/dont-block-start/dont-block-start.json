@@ -1,0 +1,4 @@
+{"source_filename": "dont-block-start.wast",
+ "commands": [
+  {"type": "assert_uninstantiable", "line": 4, "filename": "dont-block-start.0.wasm", "text": "cannot block a synchronous task before returning", "module_type": "binary"}, 
+  {"type": "assert_uninstantiable", "line": 25, "filename": "dont-block-start.1.wasm", "text": "cannot block a synchronous task before returning", "module_type": "binary"}]}
