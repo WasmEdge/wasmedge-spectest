@@ -1,0 +1,6 @@
+{"source_filename": "restrictions.wast",
+ "commands": [
+  {"type": "module", "line": 1, "filename": "restrictions.0.wasm", "module_type": "binary"}, 
+  {"type": "module", "line": 3, "filename": "restrictions.1.wasm", "module_type": "binary"}, 
+  {"type": "module", "line": 5, "filename": "restrictions.2.wasm", "module_type": "binary"}, 
+  {"type": "module", "line": 10, "filename": "restrictions.3.wasm", "module_type": "binary"}]}

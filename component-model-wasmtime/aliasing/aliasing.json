@@ -1,0 +1,4 @@
+{"source_filename": "aliasing.wast",
+ "commands": [
+  {"type": "module", "line": 1, "filename": "aliasing.0.wasm", "module_type": "binary"}, 
+  {"type": "module", "line": 19, "filename": "aliasing.1.wasm", "module_type": "binary"}]}
