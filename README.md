@@ -83,11 +83,6 @@
   * Changed `malformed lane index` to `i8 constant out of range` according to the latest test suite.
     * `wasm-2.0/simd_lane/simd_lane.wast` line 415-428, 521, 525, 604, 608, 612, 616, 620
 
-### Test Case Removals
-
-* `wasm-3.0/instance` folder moved to `wasm-3.0-exceptions`
-  * Temporarily moved this test set to the exception handling folder until the exception-handling proposal implementation for AOT/JIT is completed in WasmEdge.
-
 ### New S-Expression Grammar
 
 The following S-Expression constructs are not supported by [wabt](https://github.com/WebAssembly/wabt). Their corresponding `.json` and `.wasm` files are generated manually or by other tools, with new command types introduced in the JSON format.
