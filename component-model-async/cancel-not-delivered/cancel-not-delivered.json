@@ -1,0 +1,4 @@
+{"source_filename": "cancel-not-delivered.wast",
+ "commands": [
+  {"type": "module", "line": 3, "filename": "cancel-not-delivered.0.wasm", "module_type": "binary"}, 
+  {"type": "assert_trap", "line": 101, "action": {"type": "invoke", "field": "run", "args": []}, "text": "`task.cancel` called by task which has not been cancelled"}]}

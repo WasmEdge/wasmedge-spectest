@@ -1,8 +1,0 @@
-{"source_filename": "linking.wast",
- "commands": [
-  {"type": "assert_unlinkable", "line": 2, "filename": "linking.0.wasm", "text": "was not found", "module_type": "binary"}, 
-  {"type": "module", "line": 6, "name": "i", "filename": "linking.1.wasm", "module_type": "binary"}, 
-  {"type": "module", "line": 7, "filename": "linking.2.wasm", "module_type": "binary"}, 
-  {"type": "assert_unlinkable", "line": 11, "filename": "linking.3.wasm", "text": "expected module found instance", "module_type": "binary"}, 
-  {"type": "assert_unlinkable", "line": 14, "filename": "linking.4.wasm", "text": "expected function found instance", "module_type": "binary"}, 
-  {"type": "assert_unlinkable", "line": 17, "filename": "linking.5.wasm", "text": "was not found", "module_type": "binary"}]}

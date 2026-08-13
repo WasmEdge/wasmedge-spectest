@@ -1,5 +1,0 @@
-{"source_filename": "strings.wast",
- "commands": [
-  {"type": "assert_uninstantiable", "line": 5, "filename": "strings.0.wasm", "text": "unaligned pointer", "module_type": "binary"}, 
-  {"type": "assert_uninstantiable", "line": 41, "filename": "strings.1.wasm", "text": "unaligned pointer", "module_type": "binary"}, 
-  {"type": "assert_uninstantiable", "line": 77, "filename": "strings.2.wasm", "text": "string content out-of-bounds", "module_type": "binary"}]}

@@ -1,1 +1,0 @@
-(component(alias outer 100 $foo (type $foo)) )
