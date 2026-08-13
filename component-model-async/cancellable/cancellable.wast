@@ -4,7 +4,7 @@
 ;; Component $C exports five async callback-lifted functions that block in
 ;; their initial core function (the callbacks are never invoked):
 ;;   wait-cancel: blocks on cancellable waitable-set.wait, expects TASK_CANCELLED
-;;   yield-cancel: yields with cancellable, caller cancels during yield
+;;   yield-cancel: yields with cancellable until the caller cancels
 ;;   poll-cancel-pending: blocks on non-cancellable wait, then polls with cancellable
 ;;   yield-cancel-pending: blocks on non-cancellable wait, then yields with cancellable
 ;;
@@ -40,11 +40,11 @@
 
       ;; Test 2: direct cancel delivery through cancellable thread.yield
       (func $yield-cancel (export "yield-cancel") (result i32)
-        (local $ret i32)
-        ;; yield with cancellable; suspends with cancellable=true, caller cancels
-        (local.set $ret (call $thread.yield-cancellable))
-        (if (i32.ne (i32.const 1 (; CANCELLED ;)) (local.get $ret))
-          (then unreachable))
+        ;; yield with cancellable until cancelled by the caller (a single
+        ;; yield may nondeterministically complete without suspending and
+        ;; thus without the cancellation being delivered)
+        (loop $again
+          (br_if $again (i32.eqz (call $thread.yield-cancellable))))
         (call $task.cancel)
         (i32.const 0 (; EXIT ;))
       )
@@ -102,12 +102,12 @@
     )
     (type $FT (future))
     (canon task.cancel (core func $task.cancel))
-    (canon future.read $FT async (memory $memory "mem") (core func $future.read))
+    (canon future.read $FT async (memory (core memory $memory "mem")) (core func $future.read))
     (canon waitable.join (core func $waitable.join))
     (canon waitable-set.new (core func $waitable-set.new))
-    (canon waitable-set.wait cancellable (memory $memory "mem") (core func $waitable-set.wait-cancellable))
-    (canon waitable-set.wait (memory $memory "mem") (core func $waitable-set.wait))
-    (canon waitable-set.poll cancellable (memory $memory "mem") (core func $waitable-set.poll-cancellable))
+    (canon waitable-set.wait cancellable (memory (core memory $memory "mem")) (core func $waitable-set.wait-cancellable))
+    (canon waitable-set.wait (memory (core memory $memory "mem")) (core func $waitable-set.wait))
+    (canon waitable-set.poll cancellable (memory (core memory $memory "mem")) (core func $waitable-set.poll-cancellable))
     (canon thread.yield cancellable (core func $thread.yield-cancellable))
     (core instance $cm (instantiate $CM (with "" (instance
       (export "mem" (memory $memory "mem"))
@@ -122,19 +122,19 @@
     ))))
     (func (export "wait-cancel") async (result u32) (canon lift
       (core func $cm "wait-cancel")
-      async (callback (func $cm "unreachable-cb"))
+      async (callback (core func $cm "unreachable-cb"))
     ))
     (func (export "yield-cancel") async (result u32) (canon lift
       (core func $cm "yield-cancel")
-      async (callback (func $cm "unreachable-cb"))
+      async (callback (core func $cm "unreachable-cb"))
     ))
     (func (export "poll-cancel-pending") async (param "fut" $FT) (result u32) (canon lift
       (core func $cm "poll-cancel-pending")
-      async (callback (func $cm "unreachable-cb"))
+      async (callback (core func $cm "unreachable-cb"))
     ))
     (func (export "yield-cancel-pending") async (param "fut" $FT) (result u32) (canon lift
       (core func $cm "yield-cancel-pending")
-      async (callback (func $cm "unreachable-cb"))
+      async (callback (core func $cm "unreachable-cb"))
     ))
   )
 
@@ -199,9 +199,6 @@
         ;; cancel; completes immediately (C is in cancellable yield)
         (local.set $ret (call $subtask.cancel (local.get $subtask)))
         (if (i32.ne (i32.const 4 (; CANCELLED_BEFORE_RETURNED ;)) (local.get $ret))
-          ;; TODO: this currently fails in Wasmtime due to cancellable
-          ;; thread.yield not being directly resumed by subtask.cancel, but it
-          ;; seems like it should pass:
           (then unreachable))
         (call $subtask.drop (local.get $subtask))
 
@@ -288,14 +285,14 @@
     (canon subtask.cancel async (core func $subtask.cancel))
     (canon subtask.drop (core func $subtask.drop))
     (canon future.new $FT (core func $future.new))
-    (canon future.write $FT async (memory $memory "mem") (core func $future.write))
+    (canon future.write $FT async (memory (core memory $memory "mem")) (core func $future.write))
     (canon waitable.join (core func $waitable.join))
     (canon waitable-set.new (core func $waitable-set.new))
-    (canon waitable-set.wait (memory $memory "mem") (core func $waitable-set.wait))
-    (canon lower (func $wait-cancel) async (memory $memory "mem") (core func $wait-cancel'))
-    (canon lower (func $yield-cancel) async (memory $memory "mem") (core func $yield-cancel'))
-    (canon lower (func $poll-cancel-pending) async (memory $memory "mem") (core func $poll-cancel-pending'))
-    (canon lower (func $yield-cancel-pending) async (memory $memory "mem") (core func $yield-cancel-pending'))
+    (canon waitable-set.wait (memory (core memory $memory "mem")) (core func $waitable-set.wait))
+    (canon lower (func $wait-cancel) async (memory (core memory $memory "mem")) (core func $wait-cancel'))
+    (canon lower (func $yield-cancel) async (memory (core memory $memory "mem")) (core func $yield-cancel'))
+    (canon lower (func $poll-cancel-pending) async (memory (core memory $memory "mem")) (core func $poll-cancel-pending'))
+    (canon lower (func $yield-cancel-pending) async (memory (core memory $memory "mem")) (core func $yield-cancel-pending'))
     (core instance $dm (instantiate $DM (with "" (instance
       (export "mem" (memory $memory "mem"))
       (export "subtask.cancel" (func $subtask.cancel))

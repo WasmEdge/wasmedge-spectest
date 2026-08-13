@@ -1,1 +1,0 @@
-(component(type $t string) (type $v (variant (case $x "x" $t) (case $x "y" $t))) )
