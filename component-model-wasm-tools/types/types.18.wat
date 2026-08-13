@@ -1,1 +1,0 @@
-(component(component $c (type $t (component (alias outer $c $t (type))))) )

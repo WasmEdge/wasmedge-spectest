@@ -1,1 +1,0 @@
-(component(type (component (type (export "") (func)))) )

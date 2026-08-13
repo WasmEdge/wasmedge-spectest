@@ -1,0 +1,12 @@
+{"source_filename": "cancel-targeted-resume.wast",
+ "commands": [
+  {"type": "module", "line": 11, "filename": "cancel-targeted-resume.0.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 97, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "module", "line": 106, "filename": "cancel-targeted-resume.1.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 281, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "module", "line": 285, "filename": "cancel-targeted-resume.2.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 460, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "module", "line": 465, "filename": "cancel-targeted-resume.3.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 607, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "module", "line": 613, "filename": "cancel-targeted-resume.4.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 699, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}]}

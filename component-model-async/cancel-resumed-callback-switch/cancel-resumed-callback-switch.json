@@ -1,0 +1,6 @@
+{"source_filename": "cancel-resumed-callback-switch.wast",
+ "commands": [
+  {"type": "module", "line": 10, "filename": "cancel-resumed-callback-switch.0.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 151, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "module", "line": 155, "filename": "cancel-resumed-callback-switch.1.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 331, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "u32", "value": "42"}]}]}

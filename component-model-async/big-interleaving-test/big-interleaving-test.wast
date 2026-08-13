@@ -111,9 +111,9 @@
     (canon waitable.join (core func $waitable.join))
     (canon waitable-set.new (core func $waitable-set.new))
     (canon waitable-set.drop (core func $waitable-set.drop))
-    (canon stream.read $ST async (memory $memory "mem") (core func $stream.read))
+    (canon stream.read $ST async (memory (core memory $memory "mem")) (core func $stream.read))
     (canon stream.drop-readable $ST (core func $stream.drop-readable))
-    (canon future.read $FT async (memory $memory "mem") (core func $future.read))
+    (canon future.read $FT async (memory (core memory $memory "mem")) (core func $future.read))
     (canon future.drop-readable $FT (core func $future.drop-readable))
     (core instance $mm (instantiate $MM (with "" (instance
       (export "mem" (memory $memory "mem"))
@@ -131,13 +131,13 @@
       (export "future.read" (func $future.read))
       (export "future.drop-readable" (func $future.drop-readable))))))
     (func (export "sink") async (param "in" (stream u8)) (canon lift
-      (core func $mm "sink") async (memory $memory "mem") (callback (func $mm "sink_cb"))))
+      (core func $mm "sink") async (memory (core memory $memory "mem")) (callback (core func $mm "sink_cb"))))
     (func (export "sink-future") async (param "in" (future u8)) (canon lift
-      (core func $mm "sink-future") async (memory $memory "mem") (callback (func $mm "sink-future_cb"))))
+      (core func $mm "sink-future") async (memory (core memory $memory "mem")) (callback (core func $mm "sink-future_cb"))))
     (func (export "block-empty") async (canon lift
-      (core func $mm "block-empty") async (memory $memory "mem") (callback (func $mm "block-empty_cb"))))
+      (core func $mm "block-empty") async (memory (core memory $memory "mem")) (callback (core func $mm "block-empty_cb"))))
     (func (export "block-future") async (param "in" (future u8)) (canon lift
-      (core func $mm "block-future") async (memory $memory "mem") (callback (func $mm "block-future_cb"))))
+      (core func $mm "block-future") async (memory (core memory $memory "mem")) (callback (core func $mm "block-future_cb"))))
     (func (export "bp-inc") (canon lift (core func $mm "bp-inc")))
     (func (export "bp-dec") (canon lift (core func $mm "bp-dec")))
   )
@@ -168,6 +168,7 @@
       (import "" "stream.cancel-write" (func $stream.cancel-write (param i32) (result i32)))
       (import "" "stream.drop-readable" (func $stream.drop-readable (param i32)))
       (import "" "stream.drop-writable" (func $stream.drop-writable (param i32)))
+      (import "" "stream.forward" (func $stream.forward (param i32 i32)))
       (import "" "future.new" (func $future.new (result i64)))
       (import "" "future.read" (func $future.read (param i32 i32) (result i32)))
       (import "" "future.write" (func $future.write (param i32 i32) (result i32)))
@@ -175,6 +176,7 @@
       (import "" "future.cancel-write" (func $future.cancel-write (param i32) (result i32)))
       (import "" "future.drop-readable" (func $future.drop-readable (param i32)))
       (import "" "future.drop-writable" (func $future.drop-writable (param i32)))
+      (import "" "future.forward" (func $future.forward (param i32 i32)))
       (import "" "task.return" (func $task.return))
       (import "" "waitable.join" (func $waitable.join (param i32 i32)))
       (import "" "waitable-set.new" (func $waitable-set.new (result i32)))
@@ -221,6 +223,19 @@
 
       (func (export "subtask-drop") (param $sub-slot i32)
         (call $subtask.drop (call $sub (local.get $sub-slot))))
+
+      ;; Cancel the subtask and expect the given resolved state. 'subtask.cancel'
+      ;; resumes the cancelled task directly and each subtask cancelled here
+      ;; resolves upon receiving TASK_CANCELLED, so the cancellation completes
+      ;; eagerly rather than reporting BLOCKED.
+      (func (export "subtask-cancel-await") (param $sub-slot i32) (param $expected-state i32)
+        (local $st i32) (local $ret i32)
+        (local.set $st (call $sub (local.get $sub-slot)))
+        (local.set $ret (call $subtask.cancel (local.get $st)))
+        (if (i32.ne (local.get $ret) (local.get $expected-state))
+          (then unreachable))
+        (call $subtask.drop (local.get $st))
+        (call $task.return))
 
       (func (export "mock-bp-inc") (call $bp-inc))
       (func (export "mock-bp-dec") (call $bp-dec))
@@ -289,6 +304,11 @@
       (func (export "drop-writable") (param $slot i32)
         (call $stream.drop-writable (call $tx (local.get $slot))))
 
+      (func (export "stream-forward") (param $src i32) (param $dst i32)
+        (call $stream.forward (call $rx (local.get $src)) (call $tx (local.get $dst))))
+      (func (export "future-forward") (param $src i32) (param $dst i32)
+        (call $future.forward (call $rx (local.get $src)) (call $tx (local.get $dst))))
+
       (func (export "poll") (param $slot i32) (param $expected-event i32) (param $expected-payload i32)
         (local $ws i32) (local $event i32)
         (local.set $ws (call $waitable-set.new))
@@ -342,31 +362,33 @@
     (type $ST (stream u8))
     (type $FT (future u8))
     (canon stream.new $ST (core func $stream.new))
-    (canon stream.read $ST async (memory $memory "mem") (core func $stream.read))
-    (canon stream.write $ST async (memory $memory "mem") (core func $stream.write))
+    (canon stream.read $ST async (memory (core memory $memory "mem")) (core func $stream.read))
+    (canon stream.write $ST async (memory (core memory $memory "mem")) (core func $stream.write))
     (canon stream.cancel-read $ST async (core func $stream.cancel-read))
     (canon stream.cancel-write $ST async (core func $stream.cancel-write))
     (canon stream.drop-readable $ST (core func $stream.drop-readable))
     (canon stream.drop-writable $ST (core func $stream.drop-writable))
+    (canon stream.forward $ST (core func $stream.forward))
     (canon future.new $FT (core func $future.new))
-    (canon future.read $FT async (memory $memory "mem") (core func $future.read))
-    (canon future.write $FT async (memory $memory "mem") (core func $future.write))
+    (canon future.read $FT async (memory (core memory $memory "mem")) (core func $future.read))
+    (canon future.write $FT async (memory (core memory $memory "mem")) (core func $future.write))
     (canon future.cancel-read $FT async (core func $future.cancel-read))
     (canon future.cancel-write $FT async (core func $future.cancel-write))
     (canon future.drop-readable $FT (core func $future.drop-readable))
     (canon future.drop-writable $FT (core func $future.drop-writable))
+    (canon future.forward $FT (core func $future.forward))
     (canon task.return (core func $task.return))
     (canon waitable.join (core func $waitable.join))
     (canon waitable-set.new (core func $waitable-set.new))
-    (canon waitable-set.poll (memory $memory "mem") (core func $waitable-set.poll))
-    (canon waitable-set.wait (memory $memory "mem") (core func $waitable-set.wait))
+    (canon waitable-set.poll (memory (core memory $memory "mem")) (core func $waitable-set.poll))
+    (canon waitable-set.wait (memory (core memory $memory "mem")) (core func $waitable-set.wait))
     (canon waitable-set.drop (core func $waitable-set.drop))
     (canon subtask.cancel async (core func $subtask.cancel))
     (canon subtask.drop (core func $subtask.drop))
-    (canon lower (func $sink) async (memory $memory "mem") (core func $sink'))
-    (canon lower (func $sink-future) async (memory $memory "mem") (core func $sink-future'))
-    (canon lower (func $block-empty) async (memory $memory "mem") (core func $block-empty'))
-    (canon lower (func $block-future) async (memory $memory "mem") (core func $block-future'))
+    (canon lower (func $sink) async (memory (core memory $memory "mem")) (core func $sink'))
+    (canon lower (func $sink-future) async (memory (core memory $memory "mem")) (core func $sink-future'))
+    (canon lower (func $block-empty) async (memory (core memory $memory "mem")) (core func $block-empty'))
+    (canon lower (func $block-future) async (memory (core memory $memory "mem")) (core func $block-future'))
     (canon lower (func $bp-inc) (core func $bp-inc'))
     (canon lower (func $bp-dec) (core func $bp-dec'))
     (core instance $tm (instantiate $TM (with "" (instance
@@ -386,6 +408,7 @@
       (export "stream.cancel-write" (func $stream.cancel-write))
       (export "stream.drop-readable" (func $stream.drop-readable))
       (export "stream.drop-writable" (func $stream.drop-writable))
+      (export "stream.forward" (func $stream.forward))
       (export "future.new" (func $future.new))
       (export "future.read" (func $future.read))
       (export "future.write" (func $future.write))
@@ -393,6 +416,7 @@
       (export "future.cancel-write" (func $future.cancel-write))
       (export "future.drop-readable" (func $future.drop-readable))
       (export "future.drop-writable" (func $future.drop-writable))
+      (export "future.forward" (func $future.forward))
       (export "task.return" (func $task.return))
       (export "waitable.join" (func $waitable.join))
       (export "waitable-set.new" (func $waitable-set.new))
@@ -401,7 +425,7 @@
       (export "waitable-set.drop" (func $waitable-set.drop))))))
     (func (export "poll-readable") (param "slot" u8) (param "event" u8) (param "payload" u32) (canon lift (core func $tm "poll-readable")))
     (func (export "await-readable") async (param "slot" u8) (param "event" u8) (param "payload" u32) (canon lift
-      (core func $tm "await-readable") async (memory $memory "mem")))
+      (core func $tm "await-readable") async (memory (core memory $memory "mem"))))
     (func (export "call-import") (param "slot" u8) (result s32) (canon lift (core func $tm "call-import")))
     (func (export "call-import-future") (param "slot" u8) (result s32) (canon lift (core func $tm "call-import-future")))
     (func (export "call-block-empty") (param "sub" u8) (result s32) (canon lift (core func $tm "call-block-empty")))
@@ -411,7 +435,9 @@
     (func (export "mock-bp-inc") (canon lift (core func $tm "mock-bp-inc")))
     (func (export "mock-bp-dec") (canon lift (core func $tm "mock-bp-dec")))
     (func (export "await-subtask") async (param "sub" u8) (param "state" u8) (canon lift
-      (core func $tm "await-subtask") async (memory $memory "mem")))
+      (core func $tm "await-subtask") async (memory (core memory $memory "mem"))))
+    (func (export "subtask-cancel-await") async (param "sub" u8) (param "state" u8) (canon lift
+      (core func $tm "subtask-cancel-await") async (memory (core memory $memory "mem"))))
     (func (export "stream-new") (param "slot" u8) (canon lift (core func $tm "stream-new")))
     (func (export "testee-write") (param "handle" u8) (param "bytes" u32) (result s32) (canon lift (core func $tm "testee-write")))
     (func (export "testee-read") (param "handle" u8) (param "bytes" u32) (result s32) (canon lift (core func $tm "testee-read")))
@@ -426,9 +452,11 @@
     (func (export "future-drop-writable") (param "slot" u8) (canon lift (core func $tm "future-drop-writable")))
     (func (export "drop-readable") (param "slot" u8) (canon lift (core func $tm "drop-readable")))
     (func (export "drop-writable") (param "slot" u8) (canon lift (core func $tm "drop-writable")))
+    (func (export "stream-forward") (param "src" u8) (param "dst" u8) (canon lift (core func $tm "stream-forward")))
+    (func (export "future-forward") (param "src" u8) (param "dst" u8) (canon lift (core func $tm "future-forward")))
     (func (export "poll") (param "slot" u8) (param "event" u8) (param "payload" u32) (canon lift (core func $tm "poll")))
     (func (export "await") async (param "slot" u8) (param "event" u8) (param "payload" u32) (canon lift
-      (core func $tm "await") async (memory $memory "mem")))
+      (core func $tm "await") async (memory (core memory $memory "mem"))))
   )
 
   (component $Driver
@@ -442,6 +470,8 @@
     (export $sub-args-e "sub-args" (type $sub-args))
     (type $sub-expect (record (field "sub" u8) (field "state" u8)))
     (export $sub-expect-e "sub-expect" (type $sub-expect))
+    (type $forward-args (record (field "src" u8) (field "dst" u8)))
+    (export $forward-args-e "forward-args" (type $forward-args))
     (type $command (variant
       (case "stream-new" u8)
       (case "future-new" u8)
@@ -473,7 +503,10 @@
       (case "subtask-drop" u8)
       (case "await-subtask" $sub-expect-e)
       (case "mock-bp-inc")
-      (case "mock-bp-dec")))
+      (case "mock-bp-dec")
+      (case "subtask-cancel-await" $sub-expect-e)
+      (case "stream-forward" $forward-args-e)
+      (case "future-forward" $forward-args-e)))
     (export $command-e "command" (type $command))
     (import "call-import" (func $call-import (param "slot" u8) (result s32)))
     (import "stream-new" (func $stream-new (param "slot" u8)))
@@ -481,6 +514,8 @@
     (import "testee-read" (func $testee-read (param "handle" u8) (param "bytes" u32) (result s32)))
     (import "drop-readable" (func $drop-readable (param "slot" u8)))
     (import "drop-writable" (func $drop-writable (param "slot" u8)))
+    (import "stream-forward" (func $stream-forward (param "src" u8) (param "dst" u8)))
+    (import "future-forward" (func $future-forward (param "src" u8) (param "dst" u8)))
     (import "poll" (func $poll (param "slot" u8) (param "event" u8) (param "payload" u32)))
     (import "await" (func $await async (param "slot" u8) (param "event" u8) (param "payload" u32)))
     (import "future-new" (func $future-new (param "slot" u8)))
@@ -500,6 +535,7 @@
     (import "subtask-cancel" (func $subtask-cancel (param "sub" u8) (result s32)))
     (import "subtask-drop" (func $subtask-drop (param "sub" u8)))
     (import "await-subtask" (func $await-subtask async (param "sub" u8) (param "state" u8)))
+    (import "subtask-cancel-await" (func $subtask-cancel-await async (param "sub" u8) (param "state" u8)))
     (import "mock-bp-inc" (func $mock-bp-inc))
     (import "mock-bp-dec" (func $mock-bp-dec))
 
@@ -516,6 +552,8 @@
       (import "" "call-import-future" (func $call-import-future (param i32) (result i32)))
       (import "" "drop-readable" (func $drop-readable (param i32)))
       (import "" "drop-writable" (func $drop-writable (param i32)))
+      (import "" "stream-forward" (func $stream-forward (param i32 i32)))
+      (import "" "future-forward" (func $future-forward (param i32 i32)))
       (import "" "poll" (func $poll (param i32 i32 i32)))
       (import "" "await" (func $await (param i32 i32 i32) (result i32)))
       (import "" "poll-readable" (func $poll-readable (param i32 i32 i32)))
@@ -529,6 +567,7 @@
       (import "" "subtask-cancel" (func $subtask-cancel (param i32) (result i32)))
       (import "" "subtask-drop" (func $subtask-drop (param i32)))
       (import "" "await-subtask" (func $await-subtask (param i32 i32) (result i32)))
+      (import "" "subtask-cancel-await" (func $subtask-cancel-await (param i32 i32) (result i32)))
       (import "" "mock-bp-inc" (func $mock-bp-inc))
       (import "" "mock-bp-dec" (func $mock-bp-dec))
       (memory (export "mem") 1)
@@ -572,6 +611,9 @@
       (global $AWAIT_SUBTASK        i32 (i32.const 28))
       (global $MOCK_BP_INC          i32 (i32.const 29))
       (global $MOCK_BP_DEC          i32 (i32.const 30))
+      (global $SUBTASK_CANCEL_AWAIT i32 (i32.const 31))
+      (global $STREAM_FORWARD       i32 (i32.const 32))
+      (global $FUTURE_FORWARD       i32 (i32.const 33))
 
       (global $last (mut i32) (i32.const 0))
       (global $VOID_OK i32 (i32.const 1337))
@@ -628,6 +670,19 @@
             (if (i32.eq (local.get $op) (global.get $DROP_WRITABLE))
               (then
                 (call $drop-writable (i32.load8_u offset=4 (local.get $insn)))
+                (global.set $last (global.get $VOID_OK))))
+
+            (if (i32.eq (local.get $op) (global.get $STREAM_FORWARD))
+              (then
+                (call $stream-forward
+                  (i32.load8_u offset=4 (local.get $insn))
+                  (i32.load8_u offset=5 (local.get $insn)))
+                (global.set $last (global.get $VOID_OK))))
+            (if (i32.eq (local.get $op) (global.get $FUTURE_FORWARD))
+              (then
+                (call $future-forward
+                  (i32.load8_u offset=4 (local.get $insn))
+                  (i32.load8_u offset=5 (local.get $insn)))
                 (global.set $last (global.get $VOID_OK))))
 
             (if (i32.eq (local.get $op) (global.get $CALL_IMPORT))
@@ -692,6 +747,11 @@
                 (global.set $last (call $await-subtask
                   (i32.load8_u offset=4 (local.get $insn))
                   (i32.load8_u offset=5 (local.get $insn))))))
+            (if (i32.eq (local.get $op) (global.get $SUBTASK_CANCEL_AWAIT))
+              (then
+                (global.set $last (call $subtask-cancel-await
+                  (i32.load8_u offset=4 (local.get $insn))
+                  (i32.load8_u offset=5 (local.get $insn))))))
 
             (if (i32.eq (local.get $op) (global.get $MOCK_BP_INC))
               (then
@@ -726,6 +786,8 @@
     (canon lower (func $future-drop-writable) (core func $future-drop-writable'))
     (canon lower (func $drop-readable) (core func $drop-readable'))
     (canon lower (func $drop-writable) (core func $drop-writable'))
+    (canon lower (func $stream-forward) (core func $stream-forward'))
+    (canon lower (func $future-forward) (core func $future-forward'))
     (canon lower (func $poll) (core func $poll'))
     (canon lower (func $await) async (core func $await'))
     (canon lower (func $poll-readable) (core func $poll-readable'))
@@ -739,6 +801,7 @@
     (canon lower (func $subtask-cancel) (core func $subtask-cancel'))
     (canon lower (func $subtask-drop) (core func $subtask-drop'))
     (canon lower (func $await-subtask) async (core func $await-subtask'))
+    (canon lower (func $subtask-cancel-await) async (core func $subtask-cancel-await'))
     (canon lower (func $mock-bp-inc) (core func $mock-bp-inc'))
     (canon lower (func $mock-bp-dec) (core func $mock-bp-dec'))
     (core instance $dm (instantiate $DM (with "" (instance
@@ -754,6 +817,8 @@
       (export "future-drop-writable" (func $future-drop-writable'))
       (export "drop-readable" (func $drop-readable'))
       (export "drop-writable" (func $drop-writable'))
+      (export "stream-forward" (func $stream-forward'))
+      (export "future-forward" (func $future-forward'))
       (export "poll" (func $poll'))
       (export "await" (func $await'))
       (export "poll-readable" (func $poll-readable'))
@@ -767,10 +832,11 @@
       (export "subtask-cancel" (func $subtask-cancel'))
       (export "subtask-drop" (func $subtask-drop'))
       (export "await-subtask" (func $await-subtask'))
+      (export "subtask-cancel-await" (func $subtask-cancel-await'))
       (export "mock-bp-inc" (func $mock-bp-inc'))
       (export "mock-bp-dec" (func $mock-bp-dec'))))))
     (func (export "run") (param "prog" (list $command-e))
-      (canon lift (core func $dm "run") (memory $dm "mem") (realloc (func $dm "realloc")))))
+      (canon lift (core func $dm "run") (memory (core memory $dm "mem")) (realloc (core func $dm "realloc")))))
 
   (instance $mock (instantiate $Mock))
   (instance $testee (instantiate $Testee
@@ -793,6 +859,8 @@
     (with "future-drop-writable" (func $testee "future-drop-writable"))
     (with "drop-readable" (func $testee "drop-readable"))
     (with "drop-writable" (func $testee "drop-writable"))
+    (with "stream-forward" (func $testee "stream-forward"))
+    (with "future-forward" (func $testee "future-forward"))
     (with "poll" (func $testee "poll"))
     (with "await" (func $testee "await"))
     (with "poll-readable" (func $testee "poll-readable"))
@@ -806,6 +874,7 @@
     (with "subtask-cancel" (func $testee "subtask-cancel"))
     (with "subtask-drop" (func $testee "subtask-drop"))
     (with "await-subtask" (func $testee "await-subtask"))
+    (with "subtask-cancel-await" (func $testee "subtask-cancel-await"))
     (with "mock-bp-inc" (func $testee "mock-bp-inc"))
     (with "mock-bp-dec" (func $testee "mock-bp-dec"))))
   (instance $types
@@ -814,6 +883,7 @@
     (export "poll-expect" (type $driver "poll-expect"))
     (export "sub-args" (type $driver "sub-args"))
     (export "sub-expect" (type $driver "sub-expect"))
+    (export "forward-args" (type $driver "forward-args"))
     (export "command" (type $driver "command")))
   (export "types" (instance $types))
   (alias export $driver "run" (func $run))
@@ -1586,9 +1656,7 @@
     (list.const
       (variant.const "call-block-empty" (u8.const 0))
       (variant.const "expect-code" (s32.const 1))
-      (variant.const "subtask-cancel" (u8.const 0))
-      (variant.const "expect-code" (s32.const 4))
-      (variant.const "subtask-drop" (u8.const 0)))))
+      (variant.const "subtask-cancel-await" (record.const (field "sub" u8.const 0) (field "state" u8.const 4))))))
 
 (component instance $i $Tester)
 (assert_trap
@@ -1620,15 +1688,9 @@
       (variant.const "expect-code" (s32.const 1))
       (variant.const "call-block-empty" (u8.const 2))
       (variant.const "expect-code" (s32.const 1))
-      (variant.const "subtask-cancel" (u8.const 2))
-      (variant.const "expect-code" (s32.const 4))
-      (variant.const "subtask-cancel" (u8.const 0))
-      (variant.const "expect-code" (s32.const 4))
-      (variant.const "subtask-cancel" (u8.const 1))
-      (variant.const "expect-code" (s32.const 4))
-      (variant.const "subtask-drop" (u8.const 0))
-      (variant.const "subtask-drop" (u8.const 1))
-      (variant.const "subtask-drop" (u8.const 2)))))
+      (variant.const "subtask-cancel-await" (record.const (field "sub" u8.const 2) (field "state" u8.const 4)))
+      (variant.const "subtask-cancel-await" (record.const (field "sub" u8.const 0) (field "state" u8.const 4)))
+      (variant.const "subtask-cancel-await" (record.const (field "sub" u8.const 1) (field "state" u8.const 4))))))
 
 (assert_return
   (invoke "run"
@@ -1658,3 +1720,49 @@
       (variant.const "expect-code" (s32.const 3))
       (variant.const "subtask-drop" (u8.const 1))
       (variant.const "mock-bp-dec"))))
+
+(component instance $i $Tester)
+
+(assert_return
+  (invoke "run"
+    (list.const
+      (variant.const "stream-new" (u8.const 0))
+      (variant.const "stream-new" (u8.const 1))
+      (variant.const "future-new" (u8.const 2))
+      (variant.const "future-new" (u8.const 3))
+      (variant.const "stream-new" (u8.const 4))
+      (variant.const "stream-new" (u8.const 5))
+      (variant.const "future-new" (u8.const 6))
+      (variant.const "future-new" (u8.const 7))
+      (variant.const "stream-forward" (record.const (field "src" u8.const 0) (field "dst" u8.const 1)))
+      (variant.const "future-forward" (record.const (field "src" u8.const 2) (field "dst" u8.const 3)))
+      (variant.const "stream-forward" (record.const (field "src" u8.const 4) (field "dst" u8.const 5)))
+      (variant.const "future-forward" (record.const (field "src" u8.const 6) (field "dst" u8.const 7)))
+      (variant.const "testee-write" (record.const (field "handle" u8.const 0) (field "bytes" u32.const 4)))
+      (variant.const "expect-code" (s32.const -1))
+      (variant.const "future-write" (u8.const 2))
+      (variant.const "expect-code" (s32.const -1))
+      (variant.const "testee-write" (record.const (field "handle" u8.const 4) (field "bytes" u32.const 4)))
+      (variant.const "expect-code" (s32.const -1))
+      (variant.const "future-write" (u8.const 6))
+      (variant.const "expect-code" (s32.const -1))
+      (variant.const "future-read" (u8.const 7))
+      (variant.const "expect-code" (s32.const 0))
+      (variant.const "testee-read" (record.const (field "handle" u8.const 1) (field "bytes" u32.const 4)))
+      (variant.const "expect-code" (s32.const 0x40))
+      (variant.const "future-read" (u8.const 3))
+      (variant.const "expect-code" (s32.const 0))
+      (variant.const "testee-read" (record.const (field "handle" u8.const 5) (field "bytes" u32.const 4)))
+      (variant.const "expect-code" (s32.const 0x40))
+      (variant.const "poll" (record.const (field "slot" u8.const 0) (field "event" enum.const "stream-write") (field "payload" u32.const 0x40)))
+      (variant.const "poll" (record.const (field "slot" u8.const 2) (field "event" enum.const "future-write") (field "payload" u32.const 0)))
+      (variant.const "poll" (record.const (field "slot" u8.const 4) (field "event" enum.const "stream-write") (field "payload" u32.const 0x40)))
+      (variant.const "poll" (record.const (field "slot" u8.const 6) (field "event" enum.const "future-write") (field "payload" u32.const 0)))
+      (variant.const "drop-writable" (u8.const 0))
+      (variant.const "drop-readable" (u8.const 1))
+      (variant.const "future-drop-writable" (u8.const 2))
+      (variant.const "future-drop-readable" (u8.const 3))
+      (variant.const "drop-writable" (u8.const 4))
+      (variant.const "drop-readable" (u8.const 5))
+      (variant.const "future-drop-writable" (u8.const 6))
+      (variant.const "future-drop-readable" (u8.const 7)))))
