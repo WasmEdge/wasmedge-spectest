@@ -47,10 +47,11 @@
 
 ### Active Tags
 
-* `wasm-core-20260728`: Update test suite to 2026/07/28, add the return call result subtyping and the invalid abstract subtyping tests, and move the `instance` tests back to `wasm-3.0`
+* `wasm-core-20260813`: Split the component-model tests into one folder per upstream test directory and align their expected messages with WasmEdge's diagnostics
 
 ### Older Tags
 
+* `wasm-core-20260728`: Update test suite to 2026/07/28, add the return call result subtyping and the invalid abstract subtyping tests, and move the `instance` tests back to `wasm-3.0`
 * `wasm-core-20260708`: Improve test coverage around `data.drop` and `elem.drop`, and add the transitive equivalent subtyping test
 * `wasm-core-20260421`: Add tests for segment single-evaluation in `table.init`, `array.init_elem`, and `array.new_elem`
 * `wasm-core-20260326`: Fix SIMD proposal tests
