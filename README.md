@@ -34,14 +34,14 @@
 * `exception-handling-legacy`: The legacy version of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal tests.
   * This is deprecated.
 * `component-model-` prefixed folders: The tests for the [Component Model](https://github.com/WebAssembly/component-model) proposal, mirroring the folders under the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository:
-  * `component-model-wasm-tools`: The tests from `test/wasm-tools`.
-  * `component-model-wasmtime`: The tests from `test/wasmtime`.
-  * `component-model-validation`: The tests from `test/validation`.
-  * `component-model-resources`: The tests from `test/resources`.
-  * `component-model-linking`: The tests from `test/linking`.
-  * `component-model-values`: The tests from `test/values`.
   * `component-model-async`: The tests from `test/async`.
-  * The component value definitions (`component-model-values`) and the async component model (`component-model-async`) are not implemented in WasmEdge yet. Their tests are included for future use and keep the original expected messages from the spec repository, apart from the five async runtime traps listed under the component-model trap message changes.
+  * `component-model-binary`: The tests from `test/binary`.
+  * `component-model-linking`: The tests from `test/linking`.
+  * `component-model-resources`: The tests from `test/resources`.
+  * `component-model-validation`: The tests from `test/validation`.
+  * `component-model-values`: The tests from `test/values`.
+  * The former `component-model-wasm-tools` and `component-model-wasmtime` folders are gone: upstream folded `test/wasm-tools` and `test/wasmtime` into the rest of the test suite, and their cases now live in `binary`, `linking`, `resources`, `validation`, and `values`.
+  * Three of these tests are listed in the spec repository's own `test/nyi.txt` as not implemented by any engine yet, and WasmEdge does not pass them either: `component-model-async/during-sync-call-may-block-if-other-ready-threads`, `component-model-async/during-sync-call-no-exclusive-resume`, and `component-model-async/during-sync-call-no-sibling-resume`. They require a spawned thread to stay suspended across two separate host calls into the component.
 
 ## Tags
 
@@ -169,7 +169,7 @@ A new `"either"` type used in the `"expected"` array of `"assert_return"` for no
 
 ### Component-Model Spec Test Changes
 
-The component-model test data is converted from the `.wast` files in the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository with the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools) (1.253.0). The `.wast` files are copied from the spec repository and modified as described below; the `.json` and `.wasm` files are generated from the modified `.wast` files.
+The component-model test data is converted from the `.wast` files in the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository (commit `8b5c200`) with the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools) (1.256.0). The `.wast` files are copied from the spec repository and modified as described below; the `.json` and `.wasm` files are generated from the modified `.wast` files.
 
 Note: the `(component definition ...)` and `(component instance ...)` commands are converted into the `"module_definition"` and `"module_instance"` command types described above, and `assert_trap` on component instantiation is converted into `"assert_uninstantiable"`.
 
@@ -184,17 +184,7 @@ Component-level values in the `"args"` and `"expected"` fields use the WIT type 
 
 #### Removed Test Cases
 
-* `test/wasm-tools/wrong-order.wast`: The whole test is not included, because it is a core WASM section-order test and has a diverging trap message from the WASM spec.
-* `component-model-wasm-tools/import/import.wast`: The trailing `(component definition binary ...)` case (`test/wasm-tools/import.wast` line 345) is removed. The binary contains the legacy `0x01` prefix byte on the import, which the spec accepts only for backwards compatibility and WasmEdge rejects.
-
-#### Structural Changes
-
-The following wasmtime embedder-policy assertions (root-level component import/export bans and unimplemented reexports) are converted from `assert_invalid` into plain `(component ...)` commands, because they are valid components per the specification and WasmEdge supports them:
-
-* `component-model-wasmtime/import/import.wast` line 1: reexport of an imported function.
-* `component-model-wasmtime/restrictions/restrictions.wast` line 1, 3, 10: root-level component import.
-* `component-model-wasmtime/restrictions/restrictions.wast` line 5: reexport of an imported function.
-* `component-model-wasmtime/simple/simple.wast` line 24, 28: root-level component import/export.
+* `test/wasm-tools/wrong-order.wast`: while this file still existed upstream it was left out, because it is a core WASM section-order test whose expected message in the spec repository does not match the one the WASM spec prescribes. Upstream has since removed the file; the equivalent case now lives in `component-model-binary/binary/binary.wast` line 200 and is kept, with the WASM-spec message.
 
 #### Component-Model Trap Message Changes
 
@@ -209,160 +199,178 @@ WasmEdge matches an expected message by prefix: the `text` of the assertion has 
 * A variable in the middle of the reference message forces the whole sentence to be rewritten without it, e.g. `` import name `a` conflicts with previous name `a` `` -> `` import name conflicts with previous name ``.
 * A reference message that only continues after the WasmEdge error string keeps that tail, e.g. `` handle index 1 used with the wrong type, expected guest-defined resource but found a different guest-defined resource `` -> `` used with the wrong type, expected guest-defined resource but found a different guest-defined resource ``.
 * The `wasm trap: ` prefix that wasmtime puts in front of runtime traps is dropped, because WasmEdge reports the trap reason on its own.
+* `component-model-binary/binary/binary.wast` leaves the expected text of many `assert_malformed` cases empty, which means "any decoding error" for the reference tools. Prefix matching cannot accept an empty text, so each of them is filled in with the message WasmEdge reports.
+* Where the reference tool names the offending byte, e.g. `` invalid leading byte (0x44) for component defined type ``, WasmEdge reports a fixed `` malformed ... `` string for the same grammar position, so the whole message is replaced.
 
-The reference messages below are the ones reported by `wasm-tools validate --features all` (1.253.0) for the validation assertions, and by `wasmtime wast` (46.0.0) for the link-time and runtime assertions.
-
-The `component-model-values` tests keep the spec messages unmodified, because component values are not implemented in WasmEdge yet and there is no diagnostic vocabulary to adjust to. The `component-model-async` tests keep them as well, except for the five runtime traps listed below.
+The reference messages below are the ones reported by `wasm-tools validate --features all` (1.256.0) for the loading and validation assertions, and by `wasmtime wast` (46.0.0) for the link-time and runtime assertions.
 
 The full list of changes:
 
 * `component-model-async/builtin-trap-poisons-instance/builtin-trap-poisons-instance.wast` line 9: `` wasm trap: wasm `unreachable` instruction executed `` -> `` unreachable ``
 * `component-model-async/deadlock/deadlock.wast` line 73: `` wasm trap: deadlock detected: event loop cannot make further progress `` -> `` deadlock detected: event loop cannot make further progress ``
 * `component-model-async/trap-on-reenter/trap-on-reenter.wast` line 65, 86, 110: `` wasm trap: cannot enter component instance `` -> `` cannot enter component instance ``
-* `component-model-validation/abi/abi.wast` line 17: `` canonical option `realloc` requires `memory` to also be specified `` -> `` canonical option `memory` is required ``
-* `component-model-validation/attributes/attributes.wast` line 103, 162: ``` `` is not a valid name ``` -> `` `implements` name is not a valid name ``
-* `component-model-validation/attributes/attributes.wast` line 111, 117, 123, 129, 135, 141: `` import name `a` conflicts with previous name `a` `` -> `` import name conflicts with previous name ``
-* `component-model-validation/attributes/attributes.wast` line 153, 183: `` name `a1:b/c` is not valid with `implements` `` -> `` is not valid with `implements` ``
-* `component-model-validation/attributes/attributes.wast` line 234, 243: `` missing import named `primary` `` -> `` missing import ``
-* `component-model-validation/kebab/kebab.wast` line 40, 48, 52, 60: `` is not a valid extern name `` -> `` not lowercase in package name/namespace ``
-* `component-model-validation/kebab/kebab.wast` line 16, 20, 24, 28, 32, 36, 44, 56: `` is not a valid extern name `` -> `` not in kebab case ``
-* `component-model-validation/outer-alias/outer-alias.wast` line 43, 51, 59, 66, 75: `` transitively refers to resources `` -> `` refers to resources not defined in the current component ``
-* `component-model-validation/outer-alias/outer-alias.wast` line 160, 167, 174, 181: `` may only refer to types or instances `` -> `` invalid type reference ``
-* `component-model-validation/outer-alias/outer-alias.wast` line 190, 197, 215: `` unknown type 0: type index out of bounds `` -> `` type index out of bounds ``
-* `component-model-validation/resources/resources.wast` line 109, 189: `` expected own, found borrow `` -> `` expected own ``
-* `component-model-validation/resources/resources.wast` line 560: `` expected resource, found defined type `` -> `` expected resource ``
-* `component-model-validation/resources/resources.wast` line 569: `` expected defined type, found resource `` -> `` expected defined type ``
-* `component-model-validation/resources/resources.wast` line 576: `` missing import named `x` `` -> `` missing import ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 81: `` canonical encoding option `utf8` conflicts with option `utf16` `` -> `` canonical encoding option conflicts ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 88: `` canonical encoding option `utf8` conflicts with option `latin1-utf16` `` -> `` canonical encoding option conflicts ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 95: `` canonical encoding option `utf16` conflicts with option `latin1-utf16` `` -> `` canonical encoding option conflicts ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 111: `` `memory` is specified more than once `` -> `` canonical option `memory` is specified more than once ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 255: `` unknown instance: failed to find name `$i` `` -> `` unknown instance ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 263: `` lowered parameter types `[]` do not match parameter types `[I32]` `` -> `` lowered parameter types do not match parameter types ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 271: `` lowered result types `[]` do not match result types `[I32]` `` -> `` lowered result types do not match result types ``
-* `component-model-wasm-tools/adapt/adapt.wast` line 287: `` unknown core func: failed to find name `$f` `` -> `` unknown core func ``
-* `component-model-wasm-tools/alias/alias.wast` line 114, 124: `` export `a` for instance 0 is not a module `` -> `` export is not a module ``
-* `component-model-wasm-tools/alias/alias.wast` line 132, 140: `` core instance 0 has no export named `a` `` -> `` unknown export ``
-* `component-model-wasm-tools/alias/alias.wast` line 148: `` instance 0 has no export named `a` `` -> `` unknown export ``
-* `component-model-wasm-tools/alias/alias.wast` line 263, 271, 279: `` invalid outer alias count of 100 `` -> `` invalid outer alias count ``
-* `component-model-wasm-tools/definedtypes/definedtypes.wast` line 60, 67, 74: `` type index 0 is not a defined type `` -> `` not a defined type ``
-* `component-model-wasm-tools/definedtypes/definedtypes.wast` line 97: `` record field name `A-b-C-d` conflicts with previous field name `a-B-c-D` `` -> `` record field name conflicts with previous field name ``
-* `component-model-wasm-tools/definedtypes/definedtypes.wast` line 100: `` variant case name `x` conflicts with previous case name `x` `` -> `` variant case name conflicts with previous case name ``
-* `component-model-wasm-tools/definedtypes/definedtypes.wast` line 103: `` flag name `X` conflicts with previous flag name `x` `` -> `` flag name conflicts with previous flag name ``
-* `component-model-wasm-tools/definedtypes/definedtypes.wast` line 106: `` enum tag name `X` conflicts with previous tag name `x` `` -> `` enum tag name conflicts with previous tag name ``
-* `component-model-wasm-tools/export-ascription/export-ascription.wast` line 44: `` missing expected export `f` `` -> `` missing expected export ``
-* `component-model-wasm-tools/func/func.wast` line 21: `` function parameter name `FOO` conflicts with previous parameter name `foo` `` -> `` function parameter name conflicts with previous parameter name ``
-* `component-model-wasm-tools/func/func.wast` line 135: `` invalid leading byte (0x1) for number of results `` -> `` malformed defined type ``
-* `component-model-wasm-tools/func/func.wast` line 146: `` invalid leading byte (0x2) for component function results `` -> `` malformed defined type ``
-* `component-model-wasm-tools/import/import.wast` line 24: `` type index 0 is not an instance type `` -> `` unknown instance type ``
-* `component-model-wasm-tools/import/import.wast` line 31: `` core type index 0 is not a module type `` -> `` unknown module type ``
-* `component-model-wasm-tools/import/import.wast` line 38: `` type index 0 is not a function type `` -> `` unknown function type ``
-* `component-model-wasm-tools/import/import.wast` line 48, 56: `` duplicate import name `:` `` -> `` duplicate import name ``
-* `component-model-wasm-tools/import/import.wast` line 64, 72: `` duplicate import name `:a` `` -> `` duplicate import name ``
-* `component-model-wasm-tools/import/import.wast` line 79, 88: `` import name `a` conflicts with previous name `a` `` -> `` import name conflicts with previous name ``
-* `component-model-wasm-tools/import/import.wast` line 122: `` import name `wasi:http/types` conflicts with previous name `wasi:http/types` `` -> `` import name conflicts with previous name ``
-* `component-model-wasm-tools/import/import.wast` line 126, 129, 202, 205, 208, 211, 214, 240, 243, 246, 249, 252: ``` `` is not in kebab case ``` -> `` not in kebab case ``
-* `component-model-wasm-tools/import/import.wast` line 138: `` `wasi/http` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/import/import.wast` line 141: `` `TyPeS` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/import/import.wast` line 144: `` `WaSi` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/import/import.wast` line 147: `` `HtTp` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/import/import.wast` line 153: `` unexpected character '.' `` -> `` unexpected character ``
-* `component-model-wasm-tools/import/import.wast` line 159: `` unexpected character 'a' `` -> `` unexpected character ``
-* `component-model-wasm-tools/import/import.wast` line 162: `` unexpected character 'b' `` -> `` unexpected character ``
-* `component-model-wasm-tools/import/import.wast` line 165: `` unexpected character 'x' `` -> `` unexpected character ``
-* `component-model-wasm-tools/import/import.wast` line 177: `` trailing characters found: `/qux` `` -> `` trailing characters found ``
-* `component-model-wasm-tools/import/import.wast` line 199, 237, 277: ``` expected `<` at `` ``` -> `` expected `<` ``
-* `component-model-wasm-tools/import/import.wast` line 217: `` expected `{` at `>` `` -> `` expected `{` ``
-* `component-model-wasm-tools/import/import.wast` line 223: `` `xyz` is not a valid semver `` -> `` not a valid semver ``
-* `component-model-wasm-tools/import/import.wast` line 226: `` `1.2.3 >=2.3.4` is not a valid semver `` -> `` not a valid semver ``
-* `component-model-wasm-tools/import/import.wast` line 255, 261: ``` expected `>` at `` ``` -> `` expected `>` ``
-* `component-model-wasm-tools/import/import.wast` line 267: `` trailing characters found: `x` `` -> `` trailing characters found ``
-* `component-model-wasm-tools/instance-type/instance-type.wast` line 185: `` export name `a` conflicts with previous name `a` `` -> `` export name conflicts with previous name ``
-* `component-model-wasm-tools/instance-type/instance-type.wast` line 193: `` type index 0 is not an instance type `` -> `` not an instance type ``
-* `component-model-wasm-tools/instance-type/instance-type.wast` line 201: `` core type index 0 is not a module type `` -> `` not a module type ``
-* `component-model-wasm-tools/instance-type/instance-type.wast` line 216, 224, 234: `` type index 0 is not a function type `` -> `` not a function type ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 168: `` missing import named `a` `` -> `` missing import ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 178, 479: `` expected func, found component `` -> `` expected func ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 188: `` expected a result, found none `` -> `` expected a result ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 198: `` expected 0 parameters, found 1 `` -> `` type mismatch in function type ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 212: `` type mismatch in import `::` `` -> `` type mismatch in import ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 224: `` missing expected import `::foobar` `` -> `` missing expected import ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 233: `` missing expected export `x` `` -> `` missing expected export ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 308: `` expected global type i32, found i64 `` -> `` type mismatch in global type ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 316: `` expected table element type funcref, found externref `` -> `` type mismatch in table element type ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 365: `` type mismatch in export `g` `` -> `` type mismatch in export ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 436, 448: ``` duplicate module instantiation argument named `` ``` -> `` duplicate module instantiation argument ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 459: `` expected global, found func `` -> `` expected global ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 470: `` instantiation argument `a` conflicts with previous argument `a` `` -> `` instantiation argument conflicts with previous argument ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 525: `` export name `a` conflicts with previous name `a` `` -> `` export name conflicts with previous name ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 567: ``` export name `` already defined ``` -> `` duplicate export name ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 575: `` no export named `a` `` -> `` unknown export ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 613: ``` module instantiation argument `` does not export an item named `table` ``` -> `` unknown export ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 642: `` expected primitive `u32` found primitive `string` `` -> `` primitive mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 691: `` expected parameter named `y`, found `x` `` -> `` type mismatch in function parameter ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 701: `` type mismatch in function parameter `x` `` -> `` type mismatch in function parameter ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 711: `` type mismatch with result type `` -> `` type mismatch in result type ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 722: `` type mismatch in instance export `a` `` -> `` type mismatch in instance export ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 734: `` expected primitive, found record `` -> `` type mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 746: `` expected record, found u32 `` -> `` type mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 759: `` expected u32, found tuple `` -> `` type mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 772: `` type mismatch in record field `x` `` -> `` type mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 784: `` expected 1 fields, found 2 `` -> `` type mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 796: `` expected field name `a`, found `b` `` -> `` type mismatch in record field ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 808: `` expected 1 cases, found 2 `` -> `` type mismatch ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 820: `` expected case named `x`, found `y` `` -> `` type mismatch in variant case ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 832: `` expected case `x` to have a type, found none `` -> `` type mismatch in variant case ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 844: `` expected case `x` to have no type `` -> `` type mismatch in variant case ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 856: `` type mismatch in variant case `x` `` -> `` type mismatch in variant case ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 868: `` expected 1 types, found 2 `` -> `` type mismatch in tuple field ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 880: `` type mismatch in tuple field 0 `` -> `` type mismatch in tuple field ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 892: `` mismatch in flags elements `` -> `` type mismatch in flags elements ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 952: `` expected ok type, but found none `` -> `` type mismatch in result type ``
-* `component-model-wasm-tools/instantiate/instantiate.wast` line 976: `` expected err type, but found none `` -> `` type mismatch in result type ``
-* `component-model-wasm-tools/invalid/invalid.wast` line 22: `` outer count of `100` is too large `` -> `` outer count is too large ``
-* `component-model-wasm-tools/invalid/invalid.wast` line 28: `` outer component `nonexistent` not found `` -> `` outer component not found ``
-* `component-model-wasm-tools/invalid/invalid.wast` line 34: `` outer item `x` is not a module, type, or component `` -> `` outer item is not a module, type, or component ``
-* `component-model-wasm-tools/naming/naming.wast` line 14: `` `1` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 22: `` instance 0 has no export named `Xml` `` -> `` unknown export ``
-* `component-model-wasm-tools/naming/naming.wast` line 33: `` enum tag name `NevEr` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 40: `` record field name `GoNnA` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 47: `` variant case name `GIVe` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 55: `` function parameter name `yOu` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 62: `` `NevEr` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 69: `` `GonnA` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 76: `` `lET` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 83: `` `YoU` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 90: `` `DOWn` is not in kebab case `` -> `` not in kebab case ``
-* `component-model-wasm-tools/naming/naming.wast` line 97: `` character `A` is not lowercase in package name/namespace `` -> `` not lowercase in package name/namespace ``
-* `component-model-wasm-tools/naming/naming.wast` line 103: `` character `B` is not lowercase in package name/namespace `` -> `` not lowercase in package name/namespace ``
-* `component-model-wasm-tools/naming/naming.wast` line 120: `` import name `[method]a.a` conflicts with previous name `a` `` -> `` import name conflicts with previous name ``
-* `component-model-wasm-tools/naming/naming.wast` line 127: `` import name `[static]a.a` conflicts with previous name `a` `` -> `` import name conflicts with previous name ``
-* `component-model-wasm-tools/resources/resources.wast` line 499: `` expected resource, found defined type `` -> `` expected resource ``
-* `component-model-wasm-tools/resources/resources.wast` line 510: `` expected defined type, found resource `` -> `` expected defined type ``
-* `component-model-wasm-tools/resources/resources.wast` line 750: `` missing import named `x` `` -> `` missing import ``
-* `component-model-wasm-tools/resources/resources.wast` line 760: `` missing import named `y` `` -> `` missing import ``
-* `component-model-wasm-tools/resources/resources.wast` line 849: `` expected component, found instance `` -> `` expected component ``
-* `component-model-wasm-tools/resources/resources.wast` line 870: `` type mismatch for import `y`: resource types are not the same `` -> `` resource types are not the same ``
-* `component-model-wasm-tools/resources/resources.wast` line 915, 920, 925, 1050: `` import name `[constructor]a` is not valid: function does not match expected resource name `b` `` -> `` function does not match expected resource name ``
-* `component-model-wasm-tools/tags/tags.wast` line 9: ``` export `` for core instance 0 is not a tag ``` -> `` unknown tag ``
-* `component-model-wasm-tools/tags/tags.wast` line 30: `` unknown tag 0 `` -> `` unknown tag ``
-* `component-model-wasm-tools/types/types.wast` line 8, 49: `` type index 0 is not a function type `` -> `` unknown function type ``
-* `component-model-wasm-tools/types/types.wast` line 15, 40: `` core type index 0 is not a module type `` -> `` unknown module type ``
-* `component-model-wasm-tools/types/types.wast` line 22, 31: `` type index 0 is not an instance type `` -> `` unknown instance type ``
-* `component-model-wasm-tools/types/types.wast` line 78: `` export name `a` already defined `` -> `` duplicate export name ``
-* `component-model-wasm-tools/types/types.wast` line 112: `` export name `A` conflicts with previous name `a` `` -> `` conflicts with previous export name ``
-* `component-model-wasm-tools/types/types.wast` line 121: `` import name `a` conflicts with previous name `A` `` -> `` conflicts with previous import name ``
-* `component-model-wasm-tools/types/types.wast` line 165, 217: `` invalid outer alias count of 100 `` -> `` invalid outer alias count ``
-* `component-model-wasm-tools/types/types.wast` line 177, 229: ``` name `` already defined ``` -> `` duplicate export name ``
-* `component-model-wasm-tools/types/types.wast` line 194: `` export name `FOO-bar-BAZ` conflicts with previous name `foo-BAR-baz` `` -> `` conflicts with previous export name ``
-* `component-model-wasm-tools/very-nested/very-nested.wast` line 1567: `` export name `q` conflicts with previous name `q` `` -> `` export name conflicts with previous name ``
-* `component-model-wasm-tools/types/types.wast` line 368: `` type index 0 is a module type `` -> `` unknown module type ``
-* `component-model-wasmtime/modules/modules.wast` line 32: `` module export `the-export` not defined `` -> `` not defined ``
-* `component-model-wasmtime/modules/modules.wast` line 47: `` module import `env::something` not defined `` -> `` not defined ``
-* `component-model-wasmtime/modules/modules.wast` line 96: `` expected type `(func (param i32))`, found type `(func)` `` -> `` has the wrong type ``
-* `component-model-wasmtime/modules/modules.wast` line 154: `` export `f` has the wrong type `` -> `` has the wrong type ``
-* `component-model-wasmtime/modules/modules.wast` line 161, 168: `` export `t` has the wrong type `` -> `` has the wrong type ``
-* `component-model-wasmtime/modules/modules.wast` line 175: `` export `m` has the wrong type `` -> `` has the wrong type ``
-* `component-model-wasmtime/modules/modules.wast` line 182, 189: `` export `g` has the wrong type `` -> `` has the wrong type ``
-* `component-model-wasmtime/modules/modules.wast` line 245, 252, 259, 266, 273, 280: `` module import `::` has the wrong type `` -> `` has the wrong type ``
-* `component-model-wasmtime/resources/resources.wast` line 1089, 1091: `` handle index 1 used with the wrong type, expected guest-defined resource but found a different guest-defined resource `` -> `` used with the wrong type, expected guest-defined resource but found a different guest-defined resource ``
+* `component-model-binary/binary/binary.wast` line 17, 18, 19, 20: `` `` (empty) -> `` magic header not detected ``
+* `component-model-binary/binary/binary.wast` line 10, 11, 12, 13, 14, 15, 16: `` `` (empty) -> `` unexpected end ``
+* `component-model-binary/binary/binary.wast` line 21, 22, 23, 24, 25, 26: `` `` (empty) -> `` unknown binary version ``
+* `component-model-binary/binary/binary.wast` line 521: ``` `core instance 0 has no export named `f`` ``` -> `` unknown export ``
+* `component-model-binary/binary/binary.wast` line 1530: `` expected a version header for a component `` -> `` unknown binary version ``
+* `component-model-binary/binary/binary.wast` line 217: `` expected a version header for a module `` -> `` unknown binary version ``
+* `component-model-binary/binary/binary.wast` line 506: ``` `instance 0 has no export named `t`` ``` -> `` unknown export ``
+* `component-model-binary/binary/binary.wast` line 1161, 1170: `` invalid boolean value `` -> `` malformed canonical ``
+* `component-model-binary/binary/binary.wast` line 943: `` invalid leading byte `` -> `` invalid type reference ``
+* `component-model-binary/binary/binary.wast` line 1314: `` invalid leading byte (0x0) for component external kind `` -> `` integer representation too long ``
+* `component-model-binary/binary/binary.wast` line 296: `` invalid leading byte (0x0) for instantiation arg kind `` -> `` malformed core instance ``
+* `component-model-binary/binary/binary.wast` line 921: `` invalid leading byte (0x0) for outer alias kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 931: `` invalid leading byte (0x0) for outer alias target `` -> `` malformed alias target ``
+* `component-model-binary/binary/binary.wast` line 1124: `` invalid leading byte (0x1) for canonical function lift `` -> `` malformed canonical ``
+* `component-model-binary/binary/binary.wast` line 1133: `` invalid leading byte (0x1) for canonical function lower `` -> `` malformed canonical ``
+* `component-model-binary/binary/binary.wast` line 480: `` invalid leading byte (0x1) for component outer alias kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 762: `` invalid leading byte (0x1) for number of results `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 622: `` invalid leading byte (0x1) for zero byte required `` -> `` malformed variant type ``
+* `component-model-binary/binary/binary.wast` line 458: `` invalid leading byte (0x13) for component outer alias kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 772: `` invalid leading byte (0x2) for component function results `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 278: `` invalid leading byte (0x2) for core instance `` -> `` malformed core instance ``
+* `component-model-binary/binary/binary.wast` line 343: `` invalid leading byte (0x2) for instance `` -> `` malformed instance ``
+* `component-model-binary/binary/binary.wast` line 1463: `` invalid leading byte (0x2) for optional component export type `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 1292: `` invalid leading byte (0x2) for type bound `` -> `` invalid wasm grammar ``
+* `component-model-binary/binary/binary.wast` line 1105: `` invalid leading byte (0x2e) for canonical function `` -> `` malformed canonical ``
+* `component-model-binary/binary/binary.wast` line 431: `` invalid leading byte (0x3) for alias `` -> `` malformed alias target ``
+* `component-model-binary/binary/binary.wast` line 1267: `` invalid leading byte (0x3) for component name `` -> `` malformed name ``
+* `component-model-binary/binary/binary.wast` line 863: `` invalid leading byte (0x3) for component or instance type declaration `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 1281: `` invalid leading byte (0x3) for name option `` -> `` malformed name ``
+* `component-model-binary/binary/binary.wast` line 609: `` invalid leading byte (0x3e) for component defined type `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 911: `` invalid leading byte (0x4) for type definition `` -> `` invalid wasm grammar ``
+* `component-model-binary/binary/binary.wast` line 1114: `` invalid leading byte (0x43) for canonical function `` -> `` malformed canonical ``
+* `component-model-binary/binary/binary.wast` line 600: `` invalid leading byte (0x44) for component defined type `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 851: `` invalid leading byte (0x5) for component or instance type declaration `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 449, 471: `` invalid leading byte (0x5) for component outer alias kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 1303: `` invalid leading byte (0x6) for component external kind `` -> `` invalid wasm grammar ``
+* `component-model-binary/binary/binary.wast` line 1496: `` invalid leading byte (0x6) for component external kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 440: `` invalid leading byte (0x6) for component outer alias kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 591: `` invalid leading byte (0x62) for component defined type `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 1096: `` invalid leading byte (0x7) for canonical function `` -> `` malformed canonical ``
+* `component-model-binary/binary/binary.wast` line 1151: `` invalid leading byte (0xa) for canonical option `` -> `` unknown canonical option ``
+* `component-model-binary/binary/binary.wast` line 1351, 1365: `` is not a valid extern name `` -> `` not in kebab case ``
+* `component-model-binary/binary/binary.wast` line 738: `` is not valid at this time `` -> ``` ``stream<char>` is not valid at this time` ```
+* `component-model-binary/binary/binary.wast` line 208: `` section out of order `` -> `` unexpected content after last section ``
+* `component-model-binary/binary/binary.wast` line 729: `` type index 0 is not a resource type `` -> `` not a resource type ``
+* `component-model-binary/binary/binary.wast` line 165: `` unexpected end-of-file `` -> `` integer representation too long ``
+* `component-model-binary/binary/binary.wast` line 50, 90, 1325: `` unexpected end-of-file `` -> `` length out of bounds ``
+* `component-model-binary/binary/binary.wast` line 97: `` unexpected end-of-file `` -> `` section size mismatch ``
+* `component-model-linking/tags/tags.wast` line 142: `` export `f` for core instance 0 is not a tag `` -> `` unknown tag ``
+* `component-model-resources/handle-table/handle-table.wast` line 322, 324: `` handle index 1 used with the wrong type, expected guest-defined resource but found a different guest-defined resource `` -> `` used with the wrong type, expected guest-defined resource but found a different guest-defined resource ``
+* `component-model-validation/abi/abi.wast` line 163: ``` ``memory` is specified more than once` ``` -> `` canonical option `memory` is specified more than once ``
+* `component-model-validation/abi/abi.wast` line 150: ``` `canonical encoding option `utf16` conflicts with option `latin1-utf16`` ``` -> `` canonical encoding option conflicts ``
+* `component-model-validation/abi/abi.wast` line 144: ``` `canonical encoding option `utf8` conflicts with option `latin1-utf16`` ``` -> `` canonical encoding option conflicts ``
+* `component-model-validation/abi/abi.wast` line 138: ``` `canonical encoding option `utf8` conflicts with option `utf16`` ``` -> `` canonical encoding option conflicts ``
+* `component-model-validation/abi/abi.wast` line 20: `` canonical option `realloc` requires `memory` to also be specified `` -> `` canonical option `memory` is required ``
+* `component-model-validation/abi/abi.wast` line 256: ``` `lowered parameter types `[]` do not match parameter types `[I32]`` ``` -> `` lowered parameter types do not match parameter types ``
+* `component-model-validation/abi/abi.wast` line 263: ``` `lowered result types `[]` do not match result types `[I32]`` ``` -> `` lowered result types do not match result types ``
+* `component-model-validation/annotated-names/annotated-names.wast` line 96: `` does not match expected resource name `` -> `` function does not match expected resource name ``
+* `component-model-validation/annotated-names/annotated-names.wast` line 33, 175: ``` `function does not match expected resource name `b`` ``` -> `` function does not match expected resource name ``
+* `component-model-validation/annotated-names/annotated-names.wast` line 197: ``` `import name `[method]a.a` conflicts with previous name `a`` ``` -> `` import name conflicts with previous name ``
+* `component-model-validation/annotated-names/annotated-names.wast` line 202: ``` `import name `[static]a.a` conflicts with previous name `a`` ``` -> `` import name conflicts with previous name ``
+* `component-model-validation/annotated-names/annotated-names.wast` line 28: ``` `should return `(own $T)`` ``` -> ``` `function should return `(own $T)` or `(result (own $T))`` ```
+* `component-model-validation/attributes/attributes.wast` line 111, 117, 123, 129, 135, 141: `` conflicts with previous name `` -> `` import name conflicts with previous name ``
+* `component-model-validation/attributes/attributes.wast` line 234, 243: ``` `missing import named `primary`` ``` -> `` missing import ``
+* `component-model-validation/attributes/attributes.wast` line 153, 183: ``` `name `a1:b/c` is not valid with `implements`` ``` -> ``` `is not valid with `implements`` ```
+* `component-model-validation/attributes/attributes.wast` line 103, 162: `` not a valid name `` -> ``` ``implements` name is not a valid name` ```
+* `component-model-validation/attributes/attributes.wast` line 165: `` only instances `` -> ``` `only instances can have an `implements`` ```
+* `component-model-validation/core-modules/core-modules.wast` line 93, 109: ``` `duplicate import name `:`` ``` -> `` duplicate import name ``
+* `component-model-validation/core-modules/core-modules.wast` line 101, 117: ``` `duplicate import name `:a`` ``` -> `` duplicate import name ``
+* `component-model-validation/core-modules/core-modules.wast` line 50: `` export name `a` already defined `` -> `` duplicate export name ``
+* `component-model-validation/core-modules/core-modules.wast` line 71, 81: `` name `` already defined `` -> `` duplicate export name ``
+* `component-model-validation/defined-types/defined-types.wast` line 250: `` core type index 0 is not a module type `` -> `` not a module type ``
+* `component-model-validation/defined-types/defined-types.wast` line 238, 244: `` core type index 0 is not a module type `` -> `` unknown module type ``
+* `component-model-validation/defined-types/defined-types.wast` line 72: `` enum tag name `NevEr` is not in kebab case `` -> `` not in kebab case ``
+* `component-model-validation/defined-types/defined-types.wast` line 63: ``` `enum tag name `X` conflicts with previous tag name `x`` ``` -> `` enum tag name conflicts with previous tag name ``
+* `component-model-validation/defined-types/defined-types.wast` line 60: ``` `flag name `X` conflicts with previous flag name `x`` ``` -> `` flag name conflicts with previous flag name ``
+* `component-model-validation/defined-types/defined-types.wast` line 66: ``` `function parameter name `FOO` conflicts with previous parameter name `foo`` ``` -> `` function parameter name conflicts with previous parameter name ``
+* `component-model-validation/defined-types/defined-types.wast` line 81: `` function parameter name `yOu` is not in kebab case `` -> `` not in kebab case ``
+* `component-model-validation/defined-types/defined-types.wast` line 51: ``` `record field name `A-b-C-d` conflicts with previous field name `a-B-c-D`` ``` -> `` record field name conflicts with previous field name ``
+* `component-model-validation/defined-types/defined-types.wast` line 75: `` record field name `GoNnA` is not in kebab case `` -> `` not in kebab case ``
+* `component-model-validation/defined-types/defined-types.wast` line 125, 130, 135: `` type index 0 is not a defined type `` -> `` not a defined type ``
+* `component-model-validation/defined-types/defined-types.wast` line 191, 203, 210: `` type index 0 is not a function type `` -> `` not a function type ``
+* `component-model-validation/defined-types/defined-types.wast` line 183, 197: `` type index 0 is not a function type `` -> `` unknown function type ``
+* `component-model-validation/defined-types/defined-types.wast` line 230: `` type index 0 is not an instance type `` -> `` not an instance type ``
+* `component-model-validation/defined-types/defined-types.wast` line 218, 224: `` type index 0 is not an instance type `` -> `` unknown instance type ``
+* `component-model-validation/defined-types/defined-types.wast` line 78: `` variant case name `GIVe` is not in kebab case `` -> `` not in kebab case ``
+* `component-model-validation/defined-types/defined-types.wast` line 57: ``` `variant case name `X` conflicts with previous case name `x`` ``` -> `` variant case name conflicts with previous case name ``
+* `component-model-validation/defined-types/defined-types.wast` line 54: ``` `variant case name `x` conflicts with previous case name `x`` ``` -> `` variant case name conflicts with previous case name ``
+* `component-model-validation/extern-names/extern-names.wast` line 22: `` conflicts with previous name `` -> `` import name conflicts with previous name ``
+* `component-model-validation/extern-names/extern-names.wast` line 58: ``` `trailing characters found: `/qux`` ``` -> `` trailing characters found ``
+* `component-model-validation/extern-names/extern-names.wast` line 31: `` unexpected character '.' `` -> `` unexpected character ``
+* `component-model-validation/extern-names/extern-names.wast` line 37: `` unexpected character 'a' `` -> `` unexpected character ``
+* `component-model-validation/extern-names/extern-names.wast` line 40: `` unexpected character 'b' `` -> `` unexpected character ``
+* `component-model-validation/extern-names/extern-names.wast` line 43: `` unexpected character 'x' `` -> `` unexpected character ``
+* `component-model-validation/external-visibility/external-visibility.wast` line 605: ``` `missing expected export `f`` ``` -> `` missing expected export ``
+* `component-model-validation/instantiation/instantiation.wast` line 642: ``` `core instance 0 has no export named `a`` ``` -> `` unknown export ``
+* `component-model-validation/instantiation/instantiation.wast` line 465: ``` `does not export an item named `table`` ``` -> `` unknown export ``
+* `component-model-validation/instantiation/instantiation.wast` line 235: `` expected 0 parameters, found 1 `` -> `` type mismatch in function type ``
+* `component-model-validation/instantiation/instantiation.wast` line 86: `` expected 1 cases, found 2 `` -> `` type mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 68: `` expected 1 fields, found 2 `` -> `` type mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 131: `` expected 1 types, found 2 `` -> `` type mismatch in tuple field ``
+* `component-model-validation/instantiation/instantiation.wast` line 228: `` expected a result, found none `` -> `` expected a result ``
+* `component-model-validation/instantiation/instantiation.wast` line 104: `` expected case `x` to have a type, found none `` -> `` type mismatch in variant case ``
+* `component-model-validation/instantiation/instantiation.wast` line 113: `` expected case `x` to have no type `` -> `` type mismatch in variant case ``
+* `component-model-validation/instantiation/instantiation.wast` line 95: ``` `expected case named `x`, found `y`` ``` -> `` type mismatch in variant case ``
+* `component-model-validation/instantiation/instantiation.wast` line 496: `` expected component, found instance `` -> `` expected component ``
+* `component-model-validation/instantiation/instantiation.wast` line 212: `` expected err type, but found none `` -> `` type mismatch in result type ``
+* `component-model-validation/instantiation/instantiation.wast` line 77: ``` `expected field name `a`, found `b`` ``` -> `` type mismatch in record field ``
+* `component-model-validation/instantiation/instantiation.wast` line 488: `` expected func, found component `` -> `` expected func ``
+* `component-model-validation/instantiation/instantiation.wast` line 387: `` expected global type i32, found i64 `` -> `` type mismatch in global type ``
+* `component-model-validation/instantiation/instantiation.wast` line 443: `` expected global, found func `` -> `` expected global ``
+* `component-model-validation/instantiation/instantiation.wast` line 194: `` expected ok type, but found none `` -> `` type mismatch in result type ``
+* `component-model-validation/instantiation/instantiation.wast` line 242: ``` `expected parameter named `y`, found `x`` ``` -> `` type mismatch in function parameter ``
+* `component-model-validation/instantiation/instantiation.wast` line 21: ``` `expected primitive `u32` found primitive `string`` ``` -> `` primitive mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 30: `` expected primitive, found record `` -> `` type mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 39: `` expected record, found u32 `` -> `` type mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 395: `` expected table element type funcref, found externref `` -> `` type mismatch in table element type ``
+* `component-model-validation/instantiation/instantiation.wast` line 49: `` expected u32, found tuple `` -> `` type mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 536: `` export name `a` already defined `` -> `` duplicate export name ``
+* `component-model-validation/instantiation/instantiation.wast` line 527: ``` `export name `a` conflicts with previous name `a`` ``` -> `` export name conflicts with previous name ``
+* `component-model-validation/instantiation/instantiation.wast` line 561: `` index out of bounds `` -> `` function index out of bounds ``
+* `component-model-validation/instantiation/instantiation.wast` line 635: ``` `instance 0 has no export named `Xml`` ``` -> `` unknown export ``
+* `component-model-validation/instantiation/instantiation.wast` line 649: ``` `instance 0 has no export named `a`` ``` -> `` unknown export ``
+* `component-model-validation/instantiation/instantiation.wast` line 516: ``` `instantiation argument `a` conflicts with previous argument `a`` ``` -> `` instantiation argument conflicts with previous argument ``
+* `component-model-validation/instantiation/instantiation.wast` line 657, 666: `` is not a module `` -> `` export is not a module ``
+* `component-model-validation/instantiation/instantiation.wast` line 149: `` mismatch in flags elements `` -> `` type mismatch in flags elements ``
+* `component-model-validation/instantiation/instantiation.wast` line 319: ``` `missing expected export `x`` ``` -> `` missing expected export ``
+* `component-model-validation/instantiation/instantiation.wast` line 624: ``` `no export named `a`` ``` -> `` unknown export ``
+* `component-model-validation/instantiation/instantiation.wast` line 327: ``` `type mismatch in export `g`` ``` -> `` type mismatch in export ``
+* `component-model-validation/instantiation/instantiation.wast` line 249: ``` `type mismatch in function parameter `x`` ``` -> `` type mismatch in function parameter ``
+* `component-model-validation/instantiation/instantiation.wast` line 274: ``` `type mismatch in instance export `a`` ``` -> `` type mismatch in instance export ``
+* `component-model-validation/instantiation/instantiation.wast` line 59: ``` `type mismatch in record field `x`` ``` -> `` type mismatch ``
+* `component-model-validation/instantiation/instantiation.wast` line 140: `` type mismatch in tuple field 0 `` -> `` type mismatch in tuple field ``
+* `component-model-validation/instantiation/instantiation.wast` line 122: ``` `type mismatch in variant case `x`` ``` -> `` type mismatch in variant case ``
+* `component-model-validation/instantiation/instantiation.wast` line 256: `` type mismatch with result type `` -> `` type mismatch in result type ``
+* `component-model-validation/kebab/kebab.wast` line 102: ``` ``1` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 118: ``` ``DOWn` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 106: ``` ``GonnA` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 55: ``` ``HtTp` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 110: ``` ``NevEr` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 47: ``` ``TyPeS` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 51: ``` ``WaSi` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 63, 67, 71: ``` ``` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 39: ``` ``aBc` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 114: ``` ``lET` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 59: ``` ``wasi/http` is not in kebab case` ``` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 144: ``` `export name `A` conflicts with previous name `a`` ``` -> `` conflicts with previous export name ``
+* `component-model-validation/kebab/kebab.wast` line 132: ``` `export name `A` conflicts with previous name `a`` ``` -> `` export name conflicts with previous name ``
+* `component-model-validation/kebab/kebab.wast` line 150: ``` `export name `FOO-bar-BAZ` conflicts with previous name `foo-BAR-baz`` ``` -> `` conflicts with previous export name ``
+* `component-model-validation/kebab/kebab.wast` line 126: ``` `export name `a` conflicts with previous name `a`` ``` -> `` export name conflicts with previous name ``
+* `component-model-validation/kebab/kebab.wast` line 138: ``` `import name `a` conflicts with previous name `A`` ``` -> `` conflicts with previous import name ``
+* `component-model-validation/kebab/kebab.wast` line 79, 91: `` is not a valid extern name `` -> `` not in kebab case ``
+* `component-model-validation/kebab/kebab.wast` line 75, 83, 87, 95: `` is not a valid extern name `` -> `` not lowercase in package name/namespace ``
+* `component-model-validation/kebab/kebab.wast` line 19, 23, 27, 31, 35, 43: `` is not in kebab case `` -> `` not in kebab case ``
+* `component-model-validation/outer-alias/outer-alias.wast` line 210, 217, 235, 245: `` index out of bounds `` -> `` type index out of bounds ``
+* `component-model-validation/outer-alias/outer-alias.wast` line 180, 187, 194, 201: `` may only refer to types or instances `` -> `` invalid type reference ``
+* `component-model-validation/outer-alias/outer-alias.wast` line 285: `` outer item `x` is not a module, type, or component `` -> `` outer item is not a module, type, or component ``
+* `component-model-validation/outer-alias/outer-alias.wast` line 44, 52, 60, 67, 76, 87, 95: `` transitively refers to resources `` -> `` refers to resources not defined in the current component ``
+* `component-model-validation/resources/resources.wast` line 666: `` expected defined type, found resource `` -> `` expected defined type ``
+* `component-model-validation/resources/resources.wast` line 110, 190: `` expected own, found borrow `` -> `` expected own ``
+* `component-model-validation/resources/resources.wast` line 657: `` expected resource, found defined type `` -> `` expected resource ``
+* `component-model-validation/resources/resources.wast` line 673: ``` `missing import named `x`` ``` -> `` missing import ``
+* `component-model-values/realloc/realloc.wast` line 124: `` realloc return: result not aligned `` -> `` unaligned pointer ``
+* `component-model-values/realloc/realloc.wast` line 67: `` wasm trap: list content out-of-bounds `` -> `` realloc return: beyond end of memory ``
+* `component-model-values/realloc/realloc.wast` line 94: `` wasm trap: unaligned pointer `` -> `` unaligned pointer ``
