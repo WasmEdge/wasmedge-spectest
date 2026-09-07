@@ -31,6 +31,7 @@
   * [Relaxed SIMD](https://github.com/WebAssembly/relaxed-simd)
   * [Tail call](https://github.com/WebAssembly/tail-call)
 * `threads`: The tests for the [Threads](https://github.com/WebAssembly/threads) proposal.
+* `wide-arithmetic`: The tests for the [Wide Arithmetic](https://github.com/WebAssembly/wide-arithmetic) proposal.
 * `exception-handling-legacy`: The legacy version of the [Exception handling](https://github.com/WebAssembly/exception-handling) proposal tests.
   * This is deprecated.
 * `component-model-` prefixed folders: The tests for the [Component Model](https://github.com/WebAssembly/component-model) proposal, mirroring the folders under the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository:
@@ -208,7 +209,7 @@ WasmEdge matches an expected message by prefix: the `text` of the assertion has 
 
 * A variable in the middle of the reference message forces the whole sentence to be rewritten without it, e.g. `` import name `a` conflicts with previous name `a` `` -> `` import name conflicts with previous name ``.
 * A reference message that only continues after the WasmEdge error string keeps that tail, e.g. `` handle index 1 used with the wrong type, expected guest-defined resource but found a different guest-defined resource `` -> `` used with the wrong type, expected guest-defined resource but found a different guest-defined resource ``.
-* The `wasm trap: ` prefix that wasmtime puts in front of runtime traps is dropped, because WasmEdge reports the trap reason on its own.
+* The `wasm trap:` prefix that wasmtime puts in front of runtime traps is dropped, because WasmEdge reports the trap reason on its own.
 
 The reference messages below are the ones reported by `wasm-tools validate --features all` (1.253.0) for the validation assertions, and by `wasmtime wast` (46.0.0) for the link-time and runtime assertions.
 
