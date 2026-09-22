@@ -150,4 +150,7 @@
   {"type": "assert_trap", "line": 1088, "action": {"type": "invoke", "field": "call_in_table", "args": [{"type": "i32", "value": "0"}]}, "text": "uninitialized element", "expected": [{"type": "i32"}]}, 
   {"type": "module", "line": 1092, "filename": "elem.113.wasm"}, 
   {"type": "assert_return", "line": 1109, "action": {"type": "invoke", "field": "call_in_table", "args": [{"type": "i32", "value": "6"}]}, "expected": [{"type": "i32", "value": "42"}]}, 
-  {"type": "assert_trap", "line": 1110, "action": {"type": "invoke", "field": "call_in_table", "args": [{"type": "i32", "value": "0"}]}, "text": "uninitialized element", "expected": [{"type": "i32"}]}]}
+  {"type": "assert_trap", "line": 1110, "action": {"type": "invoke", "field": "call_in_table", "args": [{"type": "i32", "value": "0"}]}, "text": "uninitialized element", "expected": [{"type": "i32"}]}, 
+  {"type": "module", "line": 1113, "filename": "elem.114.wasm"}, 
+  {"type": "action", "line": 1125, "action": {"type": "invoke", "field": "init", "args": []}, "expected": []}, 
+  {"type": "assert_return", "line": 1126, "action": {"type": "invoke", "field": "run", "args": []}, "expected": [{"type": "i32", "value": "205"}]}]}

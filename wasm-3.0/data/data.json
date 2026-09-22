@@ -64,4 +64,7 @@
   {"type": "assert_invalid", "line": 497, "filename": "data.61.wasm", "text": "constant expression required", "module_type": "binary"}, 
   {"type": "assert_invalid", "line": 506, "filename": "data.62.wasm", "text": "unknown global 0", "module_type": "binary"}, 
   {"type": "assert_invalid", "line": 514, "filename": "data.63.wasm", "text": "unknown global 1", "module_type": "binary"}, 
-  {"type": "assert_invalid", "line": 523, "filename": "data.64.wasm", "text": "constant expression required", "module_type": "binary"}]}
+  {"type": "assert_invalid", "line": 523, "filename": "data.64.wasm", "text": "constant expression required", "module_type": "binary"}, 
+  {"type": "module", "line": 532, "filename": "data.65.wasm"}, 
+  {"type": "action", "line": 542, "action": {"type": "invoke", "field": "init", "args": []}, "expected": []}, 
+  {"type": "assert_return", "line": 543, "action": {"type": "invoke", "field": "load", "args": []}, "expected": [{"type": "i32", "value": "205"}]}]}

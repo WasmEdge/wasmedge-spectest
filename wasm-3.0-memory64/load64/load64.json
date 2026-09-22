@@ -96,4 +96,5 @@
   {"type": "assert_invalid", "line": 532, "filename": "load64.56.wasm", "text": "type mismatch", "module_type": "binary"}, 
   {"type": "assert_invalid", "line": 542, "filename": "load64.57.wasm", "text": "type mismatch", "module_type": "binary"}, 
   {"type": "assert_invalid", "line": 551, "filename": "load64.58.wasm", "text": "type mismatch", "module_type": "binary"}, 
-  {"type": "assert_invalid", "line": 560, "filename": "load64.59.wasm", "text": "type mismatch", "module_type": "binary"}]}
+  {"type": "assert_invalid", "line": 560, "filename": "load64.59.wasm", "text": "type mismatch", "module_type": "binary"}, 
+  {"type": "assert_invalid", "line": 572, "filename": "load64.60.wasm", "text": "offset out of range", "module_type": "binary"}]}
