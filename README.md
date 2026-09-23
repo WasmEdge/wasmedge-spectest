@@ -189,6 +189,7 @@ Component-level values in the `"args"` and `"expected"` fields use the WIT type 
 #### Removed Test Cases
 
 * `test/wasm-tools/wrong-order.wast`: The whole test is not included, because it is a core WASM section-order test and has a diverging trap message from the WASM spec.
+* `component-model-wasm-tools/import/import.wast` lines 186-346 and `component-model-wasm-tools/export/export.wast` lines 50-62: the `unlocked-dep=`, `locked-dep=`, `url=`, `relative-url=` and `integrity=` names are not extern names in the current specification (`externname ::= <plainname> | <interfacename>`, `Explainer.md`), so the four `(component definition ...)` cases that import them are converted into `assert_invalid` and every expected message of the section is `not in kebab case`, the WasmEdge diagnostic for a name that is neither a plain name nor an interface name.
 * `component-model-wasm-tools/import/import.wast`: The trailing `(component definition binary ...)` case (`test/wasm-tools/import.wast` line 345) is removed. The binary contains the legacy `0x01` prefix byte on the import, which the spec accepts only for backwards compatibility and WasmEdge rejects.
 
 #### Structural Changes
