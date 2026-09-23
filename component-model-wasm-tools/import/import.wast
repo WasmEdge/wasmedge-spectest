@@ -183,22 +183,20 @@
   )
 )
 
-(assert_invalid
-  (component
-    (import "unlocked-dep=<a:b>" (func))
-    (import "unlocked-dep=<a:b@*>" (func))
-    (import "unlocked-dep=<a:b@{>=1.2.3}>" (func))
-    (import "unlocked-dep=<a:b@{>=1.2.3-rc}>" (func))
-    (import "unlocked-dep=<a:b@{<1.2.3}>" (func))
-    (import "unlocked-dep=<a:b@{<1.2.3-rc}>" (func))
-    (import "unlocked-dep=<a:b@{>=1.2.3 <1.2.3}>" (func))
-    (import "unlocked-dep=<a:b@{>=1.2.3-rc <1.2.3}>" (func))
-  )
-  "not in kebab case")
+(component definition
+  (import "unlocked-dep=<a:b>" (func))
+  (import "unlocked-dep=<a:b@*>" (func))
+  (import "unlocked-dep=<a:b@{>=1.2.3}>" (func))
+  (import "unlocked-dep=<a:b@{>=1.2.3-rc}>" (func))
+  (import "unlocked-dep=<a:b@{<1.2.3}>" (func))
+  (import "unlocked-dep=<a:b@{<1.2.3-rc}>" (func))
+  (import "unlocked-dep=<a:b@{>=1.2.3 <1.2.3}>" (func))
+  (import "unlocked-dep=<a:b@{>=1.2.3-rc <1.2.3}>" (func))
+)
 
 (assert_invalid
   (component (import "unlocked-dep=" (func)))
-  "not in kebab case")
+  "expected `<`")
 (assert_invalid
   (component (import "unlocked-dep=<" (func)))
   "not in kebab case")
@@ -216,29 +214,27 @@
   "not in kebab case")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@>" (func)))
-  "not in kebab case")
+  "expected `{`")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@{xyz}>" (func)))
-  "not in kebab case")
+  "expected `>=` or `<` at start of version range")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@{<xyz}>" (func)))
-  "not in kebab case")
+  "not a valid semver")
 (assert_invalid
   (component (import "unlocked-dep=<a:a@{<1.2.3 >=2.3.4}>" (func)))
-  "not in kebab case")
+  "not a valid semver")
 
-(assert_invalid
-  (component
-    (import "locked-dep=<a:b>" (func))
-    (import "locked-dep=<a:b@1.2.3>" (func))
-    (import "locked-dep=<a:b>,integrity=<sha256-a>" (func))
-    (import "locked-dep=<a:b@1.2.3>,integrity=<sha256-a>" (func))
-  )
-  "not in kebab case")
+(component definition
+  (import "locked-dep=<a:b>" (func))
+  (import "locked-dep=<a:b@1.2.3>" (func))
+  (import "locked-dep=<a:b>,integrity=<sha256-a>" (func))
+  (import "locked-dep=<a:b@1.2.3>,integrity=<sha256-a>" (func))
+)
 
 (assert_invalid
   (component (import "locked-dep=" (func)))
-  "not in kebab case")
+  "expected `<`")
 (assert_invalid
   (component (import "locked-dep=<" (func)))
   "not in kebab case")
@@ -256,37 +252,35 @@
   "not in kebab case")
 (assert_invalid
   (component (import "locked-dep=<a:a" (func)))
-  "not in kebab case")
+  "expected `>`")
 (assert_invalid
   (component (import "locked-dep=<a:a@>" (func)))
-  "not in kebab case")
+  "not a valid semver")
 (assert_invalid
   (component (import "locked-dep=<a:a@1.2.3" (func)))
-  "not in kebab case")
+  "expected `>`")
 (assert_invalid
   (component (import "locked-dep=<a:a@1.2.3>," (func)))
-  "not in kebab case")
+  "expected `integrity=<`")
 (assert_invalid
   (component (import "locked-dep=<a:a@1.2.3>x" (func)))
-  "not in kebab case")
+  "trailing characters found")
 
-(assert_invalid
-  (component
-    (import "url=<>" (func))
-    (import "url=<a>" (func))
-    (import "url=<a>,integrity=<sha256-a>" (func))
-  )
-  "not in kebab case")
+(component definition
+  (import "url=<>" (func))
+  (import "url=<a>" (func))
+  (import "url=<a>,integrity=<sha256-a>" (func))
+)
 
 (assert_invalid
   (component (import "url=" (func)))
-  "not in kebab case")
+  "expected `<`")
 (assert_invalid
   (component (import "url=<" (func)))
-  "not in kebab case")
+  "failed to find `>`")
 (assert_invalid
   (component (import "url=<<>" (func)))
-  "not in kebab case")
+  "url cannot contain `<`")
 
 (assert_invalid
   (component
@@ -294,53 +288,51 @@
     (import "relative-url=<a>" (func))
     (import "relative-url=<a>,integrity=<sha256-a>" (func))
   )
-  "not in kebab case")
+  "not a valid extern name")
 
 (assert_invalid
   (component (import "relative-url=" (func)))
-  "not in kebab case")
+  "not a valid extern name")
 (assert_invalid
   (component (import "relative-url=<" (func)))
-  "not in kebab case")
+  "not a valid extern name")
 (assert_invalid
   (component (import "relative-url=<<>" (func)))
-  "not in kebab case")
+  "not a valid extern name")
 
-(assert_invalid
-  (component
-    (import "integrity=<sha256-a>" (func))
-    (import "integrity=<sha384-a>" (func))
-    (import "integrity=<sha512-a>" (func))
-    (import "integrity=<sha512-a sha256-b>" (func))
-    (import "integrity=< sha512-a sha256-b >" (func))
-    (import "integrity=<  sha512-a?abcd  >" (func))
-    (import "integrity=<sha256-abcdefghijklmnopqrstuvwxyz>" (func))
-    (import "integrity=<sha256-ABCDEFGHIJKLMNOPQRSTUVWXYZ>" (func))
-    (import "integrity=<sha256-++++++++++++++++++++==>" (func))
-    (import "integrity=<sha256-////////////////////==>" (func))
-  )
-  "not in kebab case")
+(component definition
+  (import "integrity=<sha256-a>" (func))
+  (import "integrity=<sha384-a>" (func))
+  (import "integrity=<sha512-a>" (func))
+  (import "integrity=<sha512-a sha256-b>" (func))
+  (import "integrity=< sha512-a sha256-b >" (func))
+  (import "integrity=<  sha512-a?abcd  >" (func))
+  (import "integrity=<sha256-abcdefghijklmnopqrstuvwxyz>" (func))
+  (import "integrity=<sha256-ABCDEFGHIJKLMNOPQRSTUVWXYZ>" (func))
+  (import "integrity=<sha256-++++++++++++++++++++==>" (func))
+  (import "integrity=<sha256-////////////////////==>" (func))
+)
 (assert_invalid
   (component (import "integrity=<>" (func)))
-  "not in kebab case")
+  "integrity hash cannot be empty")
 (assert_invalid
   (component (import "integrity=<sha256>" (func)))
-  "not in kebab case")
+  "expected `-` after hash algorithm")
 (assert_invalid
   (component (import "integrity=<sha256->" (func)))
-  "not in kebab case")
+  "not valid base64")
 (assert_invalid
   (component (import "integrity=<sha256-^^^^>" (func)))
-  "not in kebab case")
+  "not valid base64")
 (assert_invalid
   (component (import "integrity=<sha256-=========>" (func)))
-  "not in kebab case")
+  "not valid base64")
 (assert_invalid
   (component (import "integrity=<sha256-=>" (func)))
-  "not in kebab case")
+  "not valid base64")
 (assert_invalid
   (component (import "integrity=<sha256-==>" (func)))
-  "not in kebab case")
+  "not valid base64")
 (assert_invalid
   (component (import "integrity=<md5-ABC>" (func)))
-  "not in kebab case")
+  "unrecognized hash algorithm")

@@ -48,16 +48,16 @@
 ;; cannot export some types of strings
 (assert_invalid
   (component (type (component (export "integrity=<sha256-a>" (func)))))
-  "not in kebab case")
+  "not a valid export name")
 (assert_invalid
   (component (type (component (export "url=<x>" (func)))))
-  "not in kebab case")
+  "not a valid export name")
 (assert_invalid
   (component (type (component (export "relative-url=<x>" (func)))))
-  "not in kebab case")
+  "not a valid extern name")
 (assert_invalid
   (component (type (component (export "locked-dep=<a:b>" (func)))))
-  "not in kebab case")
+  "not a valid export name")
 (assert_invalid
   (component (type (component (export "unlocked-dep=<a:b>" (func)))))
-  "not in kebab case")
+  "not a valid export name")
