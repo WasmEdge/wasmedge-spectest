@@ -322,7 +322,7 @@
 )
 (assert_invalid
   (module (func $arity-0 (select (result) (nop) (nop) (i32.const 1))))
-  "type mismatch"
+  "invalid result arity"
 )
 (assert_invalid
   (module (func $arity-2 (result i32 i32)
