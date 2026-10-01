@@ -48,10 +48,11 @@
 
 ### Active Tags
 
-* `wasm-core-20260922`: Update test suite to 2026/09/21 and add the wide-arithmetic proposal tests
+* `wasm-core-20261001`: Resync the component-model tests to 2026/09/23 and restore the `invalid result arity` expectation of the `select.wast` text assertions
 
 ### Older Tags
 
+* `wasm-core-20260922`: Update test suite to 2026/09/21 and add the wide-arithmetic proposal tests
 * `wasm-core-20260813`: Split the component-model tests into one folder per upstream test directory and align their expected messages with WasmEdge's diagnostics
 * `wasm-core-20260728`: Update test suite to 2026/07/28, add the return call result subtyping and the invalid abstract subtyping tests, and move the `instance` tests back to `wasm-3.0`
 * `wasm-core-20260708`: Improve test coverage around `data.drop` and `elem.drop`, and add the transitive equivalent subtyping test
