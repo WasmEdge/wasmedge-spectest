@@ -1,0 +1,5 @@
+{"source_filename": "validate-task-return.wast",
+ "commands": [
+  {"type": "assert_invalid", "line": 4, "filename": "validate-task-return.0.wasm", "text": "`task.return` result cannot contain a `borrow` type", "module_type": "binary"}, 
+  {"type": "assert_invalid", "line": 9, "filename": "validate-task-return.1.wasm", "text": "`task.return` result cannot contain a `borrow` type", "module_type": "binary"}, 
+  {"type": "module", "line": 14, "filename": "validate-task-return.2.wasm", "module_type": "binary"}]}

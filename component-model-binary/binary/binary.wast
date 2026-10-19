@@ -943,16 +943,36 @@
   "malformed alias target"
 )
 
+;; Within a core:moduletype, type declarators use the Core WebAssembly
+;; encoding of core:rectype: a bare 0x50 is a non-final `sub` and a nested
+;; core:moduletype can't be encoded.
+(component binary
+  "\00asm" "\0d\00\01\00"                     ;; preamble
+  "\03\09"                                    ;; core type section (9 bytes)
+  "\01"                                       ;; 1 core type
+  "\50\01"                                    ;; core:moduletype, 1 decl
+  "\01\50\00\60\00\00"                        ;; 0x01 type: (sub (func))
+)
+(assert_malformed
+  (component binary
+    "\00asm" "\0d\00\01\00"                   ;; preamble
+    "\03\0a"                                  ;; core type section (10 bytes)
+    "\01"                                     ;; 1 core type
+    "\50\01"                                  ;; core:moduletype, 1 decl
+    "\01\00\50\00\60\00\00"                   ;; 0x01 type: 0x00 is not a core:rectype
+  )
+  "integer representation too long"
+)
 (assert_malformed
   (component binary
     "\00asm" "\0d\00\01\00"                   ;; preamble
     "\03\0a"                                  ;; core type section (10 bytes)
     "\01"                                     ;; 1 core type
     "\50\02"                                  ;; core:moduletype, 2 decls
-    "\01\50\00"                               ;; 0x01 type: nested core:moduletype
-    "\01\60\00\00"                            ;; 0x01 type: core functype
+    "\01\50\00"                               ;; 0x01 type: non-final sub, no supertypes
+    "\01\60\00\00"                            ;; 0x01 is not a core:comptype
   )
-  "malformed module type"
+  "integer representation too long"
 )
 
 (component binary
@@ -1104,15 +1124,6 @@
     "\08\02"                                  ;; canon section (2 bytes)
     "\01"                                     ;; 1 canon
     "\07"                                     ;; 0x07 is unallocated
-  )
-  "malformed canonical"
-)
-(assert_malformed
-  (component binary
-    "\00asm" "\0d\00\01\00"                   ;; preamble
-    "\08\02"                                  ;; canon section (2 bytes)
-    "\01"                                     ;; 1 canon
-    "\30"                                     ;; 0x30 is unallocated
   )
   "malformed canonical"
 )
