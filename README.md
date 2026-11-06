@@ -174,7 +174,7 @@ A new `"either"` type used in the `"expected"` array of `"assert_return"` for no
 
 ### Component-Model Spec Test Changes
 
-The `.wast` files are copied from the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository (commit `3f50afc`; `binary/binary.wast` and `async/validate-task-return.wast` from commit `0220da8`), modified as described below, and converted into `.json` and `.wasm` files with the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools). Tests changed since spec commit `8b5c200` use wasm-tools built from `main` (commit `3663a40`) for the unreleased `stream.forward` and `future.forward` built-ins; `binary/binary.wast` and `async/validate-task-return.wast` use wasm-tools 1.262.0; the others use wasm-tools 1.256.0.
+The `.wast` files are copied from the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository (commit `d230073`), modified as described below, and converted into `.json` and `.wasm` files with the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools): version 1.263.0 for the tests added or changed since spec commit `0220da8`, version 1.262.0 for `async/validate-task-return.wast`, a build from `main` (commit `3663a40`, for the then unreleased `stream.forward` and `future.forward` built-ins) for the other tests changed since spec commit `8b5c200`, and version 1.256.0 for the rest.
 
 `(component definition ...)` and `(component instance ...)` become the `"module_definition"` and `"module_instance"` commands above, and `assert_trap` on component instantiation becomes `"assert_uninstantiable"`. Component-level values in `"args"` and `"expected"` use the WIT type names:
 
@@ -194,6 +194,8 @@ The expected messages are adjusted to WasmEdge's diagnostics (<https://github.co
 * Empty expected texts of `assert_malformed` in `component-model-binary/binary/binary.wast` are filled in with the WasmEdge message.
 * `section out of order` in `component-model-binary/binary/binary.wast` line 208 is changed to `unexpected content after last section`, the message used by the WASM spec tests.
 * `component-model-binary/binary/binary.wast` lines 964 and 975 expect `integer representation too long`, the message the WASM spec tests use for a byte that starts no core composite type.
+* The interface version assertions of `component-model-validation/version-suffix/version-suffix.wast` that expect the generic `is not valid` or `invalid interface version` carry the reason WasmEdge reports, as the malformed versions of `component-model-validation/extern-names/extern-names.wast` do.
+* `component-model-async/during-sync-call-exclusive-resume/during-sync-call-exclusive-resume.wast` line 169 expects `async-lifted export failed to produce a result`: the callback returns `EXIT` before its task has a result, which is the first trap of this scenario in the spec, while wasmtime reports the blocked synchronous call.
 
 The reference messages are the ones from `wasm-tools validate --features all` (1.256.0) for loading and validation, and from `wasmtime wast` (46.0.0) for linking and runtime.
 
@@ -201,19 +203,22 @@ The full list of changes:
 
 * `component-model-async/builtin-trap-poisons-instance/builtin-trap-poisons-instance.wast` line 9: `` wasm trap: wasm `unreachable` instruction executed `` -> `` unreachable ``
 * `component-model-async/deadlock/deadlock.wast` line 73: `` wasm trap: deadlock detected: event loop cannot make further progress `` -> `` deadlock detected: event loop cannot make further progress ``
+* `component-model-async/during-sync-call-exclusive-resume/during-sync-call-exclusive-resume.wast` line 169: `` cannot block a synchronous task before returning `` -> `` async-lifted export failed to produce a result ``
 * `component-model-async/forward/forward.wast` line 1455: `` `future.forward` requires a future type `` -> `` requires a future type ``
 * `component-model-async/forward/forward.wast` line 1449: `` `stream.forward` requires a stream type `` -> `` requires a stream type ``
 * `component-model-async/forward/forward.wast` line 993, 1011: `` handle index 1 used with the wrong type `` -> `` used with the wrong type ``
 * `component-model-async/forward/forward.wast` line 991, 1013: `` handle index 2 used with the wrong type `` -> `` used with the wrong type ``
+* `component-model-async/zero-length/zero-length.wast` line 611, 613: `` buffer pointer not aligned `` -> `` unaligned pointer ``
+* `component-model-async/zero-length/zero-length.wast` line 615, 617: `` buffer pointer out of bounds of memory `` -> `` out of bounds memory access ``
 * `component-model-binary/binary/binary.wast` line 17, 18, 19, 20: `` `` (empty) -> `` magic header not detected ``
 * `component-model-binary/binary/binary.wast` line 10, 11, 12, 13, 14, 15, 16: `` `` (empty) -> `` unexpected end ``
 * `component-model-binary/binary/binary.wast` line 21, 22, 23, 24, 25, 26: `` `` (empty) -> `` unknown binary version ``
 * `component-model-binary/binary/binary.wast` line 533: `` core instance 0 has no export named `f` `` -> `` unknown export ``
-* `component-model-binary/binary/binary.wast` line 1653: `` expected a version header for a component `` -> `` unknown binary version ``
+* `component-model-binary/binary/binary.wast` line 1659: `` expected a version header for a component `` -> `` unknown binary version ``
 * `component-model-binary/binary/binary.wast` line 217: `` expected a version header for a module `` -> `` unknown binary version ``
 * `component-model-binary/binary/binary.wast` line 518: `` instance 0 has no export named `t` `` -> `` unknown export ``
 * `component-model-binary/binary/binary.wast` line 964, 975: `` invalid leading byte `` -> `` integer representation too long ``
-* `component-model-binary/binary/binary.wast` line 1437: `` invalid leading byte (0x0) for component external kind `` -> `` integer representation too long ``
+* `component-model-binary/binary/binary.wast` line 1443: `` invalid leading byte (0x0) for component external kind `` -> `` integer representation too long ``
 * `component-model-binary/binary/binary.wast` line 296: `` invalid leading byte (0x0) for instantiation arg kind `` -> `` malformed core instance ``
 * `component-model-binary/binary/binary.wast` line 933: `` invalid leading byte (0x0) for outer alias kind `` -> `` malformed sort ``
 * `component-model-binary/binary/binary.wast` line 943: `` invalid leading byte (0x0) for outer alias target `` -> `` malformed alias target ``
@@ -227,31 +232,31 @@ The full list of changes:
 * `component-model-binary/binary/binary.wast` line 784: `` invalid leading byte (0x2) for component function results `` -> `` malformed defined type ``
 * `component-model-binary/binary/binary.wast` line 278: `` invalid leading byte (0x2) for core instance `` -> `` malformed core instance ``
 * `component-model-binary/binary/binary.wast` line 343: `` invalid leading byte (0x2) for instance `` -> `` malformed instance ``
-* `component-model-binary/binary/binary.wast` line 1586: `` invalid leading byte (0x2) for optional component export type `` -> `` malformed defined type ``
-* `component-model-binary/binary/binary.wast` line 1415: `` invalid leading byte (0x2) for type bound `` -> `` invalid wasm grammar ``
+* `component-model-binary/binary/binary.wast` line 1592: `` invalid leading byte (0x2) for optional component export type `` -> `` malformed defined type ``
+* `component-model-binary/binary/binary.wast` line 1421: `` invalid leading byte (0x2) for type bound `` -> `` invalid wasm grammar ``
 * `component-model-binary/binary/binary.wast` line 1184, 1193: `` invalid leading byte (0x2) for zero byte `` -> `` non-zero reserved byte ``
 * `component-model-binary/binary/binary.wast` line 431: `` invalid leading byte (0x3) for alias `` -> `` malformed alias target ``
-* `component-model-binary/binary/binary.wast` line 1390: `` invalid leading byte (0x3) for component name `` -> `` malformed name ``
+* `component-model-binary/binary/binary.wast` line 1396: `` invalid leading byte (0x3) for component name `` -> `` malformed name ``
 * `component-model-binary/binary/binary.wast` line 875: `` invalid leading byte (0x3) for component or instance type declaration `` -> `` malformed defined type ``
-* `component-model-binary/binary/binary.wast` line 1404: `` invalid leading byte (0x3) for name option `` -> `` malformed name ``
+* `component-model-binary/binary/binary.wast` line 1410: `` invalid leading byte (0x3) for name option `` -> `` malformed name ``
 * `component-model-binary/binary/binary.wast` line 621: `` invalid leading byte (0x3e) for component defined type `` -> `` malformed defined type ``
 * `component-model-binary/binary/binary.wast` line 923: `` invalid leading byte (0x4) for type definition `` -> `` invalid wasm grammar ``
 * `component-model-binary/binary/binary.wast` line 1137: `` invalid leading byte (0x43) for canonical function `` -> `` malformed canonical ``
 * `component-model-binary/binary/binary.wast` line 612: `` invalid leading byte (0x44) for component defined type `` -> `` malformed defined type ``
 * `component-model-binary/binary/binary.wast` line 863: `` invalid leading byte (0x5) for component or instance type declaration `` -> `` malformed defined type ``
 * `component-model-binary/binary/binary.wast` line 449, 471: `` invalid leading byte (0x5) for component outer alias kind `` -> `` malformed sort ``
-* `component-model-binary/binary/binary.wast` line 1426: `` invalid leading byte (0x6) for component external kind `` -> `` invalid wasm grammar ``
-* `component-model-binary/binary/binary.wast` line 1619: `` invalid leading byte (0x6) for component external kind `` -> `` malformed sort ``
+* `component-model-binary/binary/binary.wast` line 1432: `` invalid leading byte (0x6) for component external kind `` -> `` invalid wasm grammar ``
+* `component-model-binary/binary/binary.wast` line 1625: `` invalid leading byte (0x6) for component external kind `` -> `` malformed sort ``
 * `component-model-binary/binary/binary.wast` line 440: `` invalid leading byte (0x6) for component outer alias kind `` -> `` malformed sort ``
 * `component-model-binary/binary/binary.wast` line 603: `` invalid leading byte (0x62) for component defined type `` -> `` malformed defined type ``
 * `component-model-binary/binary/binary.wast` line 1128: `` invalid leading byte (0x7) for canonical function `` -> `` malformed canonical ``
 * `component-model-binary/binary/binary.wast` line 1174: `` invalid leading byte (0xa) for canonical option `` -> `` unknown canonical option ``
-* `component-model-binary/binary/binary.wast` line 1474, 1488: `` is not a valid extern name `` -> `` not in kebab case ``
+* `component-model-binary/binary/binary.wast` line 1480, 1494: `` is not a valid extern name `` -> `` not in kebab case ``
 * `component-model-binary/binary/binary.wast` line 750: `` is not valid at this time `` -> `` `stream<char>` is not valid at this time ``
 * `component-model-binary/binary/binary.wast` line 208: `` section out of order `` -> `` unexpected content after last section ``
 * `component-model-binary/binary/binary.wast` line 741: `` type index 0 is not a resource type `` -> `` not a resource type ``
 * `component-model-binary/binary/binary.wast` line 165: `` unexpected end-of-file `` -> `` integer representation too long ``
-* `component-model-binary/binary/binary.wast` line 50, 90, 1448: `` unexpected end-of-file `` -> `` length out of bounds ``
+* `component-model-binary/binary/binary.wast` line 50, 90, 1454: `` unexpected end-of-file `` -> `` length out of bounds ``
 * `component-model-binary/binary/binary.wast` line 97: `` unexpected end-of-file `` -> `` section size mismatch ``
 * `component-model-linking/tags/tags.wast` line 142: `` export `f` for core instance 0 is not a tag `` -> `` unknown tag ``
 * `component-model-resources/handle-table/handle-table.wast` line 322, 324: `` handle index 1 used with the wrong type, expected guest-defined resource but found a different guest-defined resource `` -> `` used with the wrong type, expected guest-defined resource but found a different guest-defined resource ``
@@ -372,6 +377,15 @@ The full list of changes:
 * `component-model-validation/resources/resources.wast` line 110, 190: `` expected own, found borrow `` -> `` expected own ``
 * `component-model-validation/resources/resources.wast` line 657: `` expected resource, found defined type `` -> `` expected resource ``
 * `component-model-validation/resources/resources.wast` line 673: `` missing import named `x` `` -> `` missing import ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 216: `` `` (empty) -> `` missing import ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 194: `` conflicts with previous name `` -> `` export name conflicts with previous name ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 183, 188: `` conflicts with previous name `` -> `` import name conflicts with previous name ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 132, 138: `` invalid interface version `` -> `` unexpected end of input ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 89: `` is not valid `` -> `` empty identifier segment ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 86: `` is not valid `` -> `` invalid component name ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 92, 95: `` is not valid `` -> `` is not the canonical version ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 74, 77, 83: `` is not valid `` -> `` unexpected character ``
+* `component-model-validation/version-suffix/version-suffix.wast` line 63, 66, 71, 80: `` is not valid `` -> `` unexpected end of input ``
 * `component-model-values/realloc/realloc.wast` line 124: `` realloc return: result not aligned `` -> `` unaligned pointer ``
 * `component-model-values/realloc/realloc.wast` line 67: `` wasm trap: list content out-of-bounds `` -> `` realloc return: beyond end of memory ``
 * `component-model-values/realloc/realloc.wast` line 94: `` wasm trap: unaligned pointer `` -> `` unaligned pointer ``

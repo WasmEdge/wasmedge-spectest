@@ -1,0 +1,12 @@
+{"source_filename": "during-sync-call-blocking-ops.wast",
+ "commands": [
+  {"type": "module", "line": 6, "filename": "during-sync-call-blocking-ops.0.wasm", "module_type": "binary"}, 
+  {"type": "assert_return", "line": 239, "action": {"type": "invoke", "field": "sync-call", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 240, "action": {"type": "invoke", "field": "waitable-set-wait", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 241, "action": {"type": "invoke", "field": "future-read", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 242, "action": {"type": "invoke", "field": "future-write", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 243, "action": {"type": "invoke", "field": "stream-read", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 244, "action": {"type": "invoke", "field": "stream-write", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 245, "action": {"type": "invoke", "field": "subtask-cancel", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 246, "action": {"type": "invoke", "field": "suspend-then-promote", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 247, "action": {"type": "invoke", "field": "yield-then-promote", "args": []}, "expected": [{"type": "u32", "value": "42"}]}]}

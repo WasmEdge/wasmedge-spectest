@@ -5,4 +5,6 @@
   {"type": "assert_return", "line": 60, "action": {"type": "invoke", "field": "sync-block", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
   {"type": "module", "line": 65, "filename": "during-sync-call-exclusive-resume.1.wasm", "module_type": "binary"}, 
   {"type": "assert_return", "line": 102, "action": {"type": "invoke", "field": "arm", "args": []}, "expected": [{"type": "u32", "value": "1"}]}, 
-  {"type": "assert_trap", "line": 103, "action": {"type": "invoke", "field": "sync-block", "args": []}, "text": "cannot block a synchronous task before returning"}]}
+  {"type": "assert_trap", "line": 103, "action": {"type": "invoke", "field": "sync-block", "args": []}, "text": "cannot block a synchronous task before returning"}, 
+  {"type": "module", "line": 107, "filename": "during-sync-call-exclusive-resume.2.wasm", "module_type": "binary"}, 
+  {"type": "assert_trap", "line": 169, "action": {"type": "invoke", "field": "run", "args": []}, "text": "async-lifted export failed to produce a result"}]}
