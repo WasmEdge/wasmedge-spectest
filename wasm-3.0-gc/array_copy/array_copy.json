@@ -34,4 +34,13 @@
   {"type": "assert_return", "line": 136, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "5"}]}, "expected": [{"type": "i32", "value": "103"}]}, 
   {"type": "assert_return", "line": 137, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "9"}]}, "expected": [{"type": "i32", "value": "107"}]}, 
   {"type": "assert_return", "line": 138, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "10"}]}, "expected": [{"type": "i32", "value": "108"}]}, 
-  {"type": "assert_return", "line": 139, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "11"}]}, "expected": [{"type": "i32", "value": "108"}]}]}
+  {"type": "assert_return", "line": 139, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "11"}]}, "expected": [{"type": "i32", "value": "108"}]}, 
+  {"type": "module", "line": 143, "filename": "array_copy.5.wasm"}, 
+  {"type": "assert_return", "line": 165, "action": {"type": "invoke", "field": "array_copy", "args": [{"type": "i32", "value": "0"}, {"type": "i32", "value": "0"}, {"type": "i32", "value": "3"}]}, "expected": []}, 
+  {"type": "assert_return", "line": 166, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "0"}]}, "expected": [{"type": "i32", "value": "1"}]}, 
+  {"type": "assert_return", "line": 167, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "1"}]}, "expected": [{"type": "i32", "value": "2"}]}, 
+  {"type": "assert_return", "line": 168, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "2"}]}, "expected": [{"type": "i32", "value": "3"}]}, 
+  {"type": "assert_return", "line": 171, "action": {"type": "invoke", "field": "array_copy_overlap", "args": []}, "expected": []}, 
+  {"type": "assert_return", "line": 172, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "0"}]}, "expected": [{"type": "i32", "value": "1"}]}, 
+  {"type": "assert_return", "line": 173, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "1"}]}, "expected": [{"type": "i32", "value": "1"}]}, 
+  {"type": "assert_return", "line": 174, "action": {"type": "invoke", "field": "array_get_nth", "args": [{"type": "i32", "value": "2"}]}, "expected": [{"type": "i32", "value": "2"}]}]}

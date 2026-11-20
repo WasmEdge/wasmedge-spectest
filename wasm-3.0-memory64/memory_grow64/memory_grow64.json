@@ -48,4 +48,9 @@
   {"type": "assert_return", "line": 92, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i64", "value": "1"}]}, "expected": [{"type": "i64", "value": "4"}]}, 
   {"type": "assert_return", "line": 93, "action": {"type": "invoke", "field": "check-memory-zero", "args": [{"type": "i64", "value": "262144"}, {"type": "i64", "value": "327679"}]}, "expected": [{"type": "i32", "value": "0"}]}, 
   {"type": "assert_return", "line": 94, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i64", "value": "1"}]}, "expected": [{"type": "i64", "value": "5"}]}, 
-  {"type": "assert_return", "line": 95, "action": {"type": "invoke", "field": "check-memory-zero", "args": [{"type": "i64", "value": "327680"}, {"type": "i64", "value": "393215"}]}, "expected": [{"type": "i32", "value": "0"}]}]}
+  {"type": "assert_return", "line": 95, "action": {"type": "invoke", "field": "check-memory-zero", "args": [{"type": "i64", "value": "327680"}, {"type": "i64", "value": "393215"}]}, "expected": [{"type": "i32", "value": "0"}]}, 
+  {"type": "module", "line": 98, "filename": "memory_grow64.4.wasm"}, 
+  {"type": "assert_return", "line": 103, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i64", "value": "281474976710656"}]}, "expected": [{"type": "i64", "value": "18446744073709551615"}]}, 
+  {"type": "assert_return", "line": 104, "action": {"type": "invoke", "field": "size", "args": []}, "expected": [{"type": "i64", "value": "1"}]}, 
+  {"type": "assert_return", "line": 105, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i64", "value": "281474976710655"}]}, "either": [{"type": "i64", "value": "18446744073709551615"}, {"type": "i64", "value": "1"}]}, 
+  {"type": "assert_return", "line": 108, "action": {"type": "invoke", "field": "size", "args": []}, "either": [{"type": "i64", "value": "1"}, {"type": "i64", "value": "281474976710656"}]}]}

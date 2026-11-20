@@ -21,4 +21,9 @@
   {"type": "assert_return", "line": 31, "action": {"type": "invoke", "field": "set-t64", "args": [{"type": "i64", "value": "4"}, {"type": "externref", "value": "4"}]}, "expected": []}, 
   {"type": "assert_return", "line": 32, "action": {"type": "invoke", "field": "get-t64", "args": [{"type": "i64", "value": "4"}]}, "expected": [{"type": "externref", "value": "4"}]}, 
   {"type": "assert_trap", "line": 33, "action": {"type": "invoke", "field": "set-t64", "args": [{"type": "i64", "value": "5"}, {"type": "externref", "value": "2"}]}, "text": "out of bounds table access", "expected": []}, 
-  {"type": "assert_trap", "line": 34, "action": {"type": "invoke", "field": "get-t64", "args": [{"type": "i64", "value": "5"}]}, "text": "out of bounds table access", "expected": [{"type": "externref"}]}]}
+  {"type": "assert_trap", "line": 34, "action": {"type": "invoke", "field": "get-t64", "args": [{"type": "i64", "value": "5"}]}, "text": "out of bounds table access", "expected": [{"type": "externref"}]}, 
+  {"type": "module", "line": 37, "filename": "table_grow64.1.wasm"}, 
+  {"type": "assert_return", "line": 44, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i64", "value": "18446744073709551615"}]}, "expected": [{"type": "i64", "value": "18446744073709551615"}]}, 
+  {"type": "assert_return", "line": 45, "action": {"type": "invoke", "field": "size", "args": []}, "expected": [{"type": "i64", "value": "1"}]}, 
+  {"type": "assert_return", "line": 46, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i64", "value": "18446744073709551614"}]}, "either": [{"type": "i64", "value": "18446744073709551615"}, {"type": "i64", "value": "1"}]}, 
+  {"type": "assert_return", "line": 49, "action": {"type": "invoke", "field": "size", "args": []}, "either": [{"type": "i64", "value": "1"}, {"type": "i64", "value": "18446744073709551615"}]}]}

@@ -45,4 +45,6 @@
   {"type": "assert_trap", "line": 209, "action": {"type": "invoke", "field": "g4", "args": []}, "text": "out of bounds memory access", "expected": []}, 
   {"type": "assert_trap", "line": 210, "action": {"type": "invoke", "field": "g7", "args": []}, "text": "out of bounds memory access", "expected": []}, 
   {"type": "assert_return", "line": 211, "action": {"type": "invoke", "field": "g8", "args": []}, "expected": []}, 
-  {"type": "assert_trap", "line": 212, "action": {"type": "invoke", "field": "g9", "args": []}, "text": "out of bounds memory access", "expected": []}]}
+  {"type": "assert_trap", "line": 212, "action": {"type": "invoke", "field": "g9", "args": []}, "text": "out of bounds memory access", "expected": []}, 
+  {"type": "module", "line": 216, "filename": "array_init_data.4.wasm"}, 
+  {"type": "assert_return", "line": 231, "action": {"type": "invoke", "field": "init", "args": []}, "expected": [{"type": "i32", "value": "117835012"}]}]}

@@ -27,4 +27,6 @@
   {"type": "module", "line": 105, "filename": "array_new_data.3.wasm"}, 
   {"type": "assert_return", "line": 118, "action": {"type": "invoke", "field": "array-new-data-little-endian", "args": []}, "expected": [{"type": "i32", "value": "3721182122"}]}, 
   {"type": "module", "line": 120, "filename": "array_new_data.4.wasm"}, 
-  {"type": "assert_return", "line": 133, "action": {"type": "invoke", "field": "array-new-data-unaligned", "args": []}, "expected": [{"type": "i32", "value": "8721"}]}]}
+  {"type": "assert_return", "line": 133, "action": {"type": "invoke", "field": "array-new-data-unaligned", "args": []}, "expected": [{"type": "i32", "value": "8721"}]}, 
+  {"type": "module", "line": 137, "filename": "array_new_data.5.wasm"}, 
+  {"type": "assert_return", "line": 152, "action": {"type": "invoke", "field": "new", "args": []}, "expected": [{"type": "i32", "value": "252579084"}]}]}

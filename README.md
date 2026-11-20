@@ -90,6 +90,9 @@
 * `wasm-2.0/select/select.json` line 324 and `wasm-3.0/select/select.json` line 368: `invalid result arity` -> `type mismatch`
   * The `.wast` files keep the upstream `invalid result arity`, which is reported by the WAT parser for `(select (result) ...)`.
   * The `.json` files and their `.wasm` modules are for the binary parser. The binary form of this assertion is encoded as a plain `select`, so the result arity cannot be detected from the bytecode and the validator reports `type mismatch` instead.
+* `wasm-3.0/binary/binary.json` line 1247: `integer representation` -> `integer representation too long`
+  * The `.wast` file keeps the upstream `integer representation`, which the reference interpreter checks as a prefix of the `integer representation too long` it reports.
+  * WasmEdge matches the other way around: the expected text has to start with the WasmEdge error string. The `.json` file therefore carries the full message of the reference interpreter.
 * Updated error message text for older tests
   * Changed `global is immutable` to `immutable global` according to the latest test suite.
     * `wasm-1.0/global/global.wast` line 244

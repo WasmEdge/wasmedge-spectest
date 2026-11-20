@@ -126,4 +126,6 @@
   {"type": "assert_malformed", "line": 1185, "filename": "binary.123.wasm", "text": "unexpected content after last section", "module_type": "binary"}, 
   {"type": "assert_malformed", "line": 1195, "filename": "binary.124.wasm", "text": "unexpected content after last section", "module_type": "binary"}, 
   {"type": "assert_malformed", "line": 1205, "filename": "binary.125.wasm", "text": "unexpected content after last section", "module_type": "binary"}, 
-  {"type": "assert_malformed", "line": 1219, "filename": "binary.126.wasm", "text": "illegal opcode ff", "module_type": "binary"}]}
+  {"type": "assert_malformed", "line": 1219, "filename": "binary.126.wasm", "text": "illegal opcode ff", "module_type": "binary"}, 
+  {"type": "assert_invalid", "line": 1238, "filename": "binary.127.wasm", "text": "unknown type", "module_type": "binary"}, 
+  {"type": "assert_malformed", "line": 1247, "filename": "binary.128.wasm", "text": "integer representation too long", "module_type": "binary"}]}

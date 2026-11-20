@@ -175,4 +175,11 @@
   {"type": "assert_malformed", "line": 173, "filename": "utf8-invalid-encoding.172.wat", "text": "malformed UTF-8 encoding", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 174, "filename": "utf8-invalid-encoding.173.wat", "text": "malformed UTF-8 encoding", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 175, "filename": "utf8-invalid-encoding.174.wat", "text": "malformed UTF-8 encoding", "module_type": "text"}, 
-  {"type": "assert_malformed", "line": 176, "filename": "utf8-invalid-encoding.175.wat", "text": "malformed UTF-8 encoding", "module_type": "text"}]}
+  {"type": "assert_malformed", "line": 176, "filename": "utf8-invalid-encoding.175.wat", "text": "malformed UTF-8 encoding", "module_type": "text"}, 
+  {"type": "module", "line": 0, "filename": "utf8-invalid-encoding.176.wasm"}, 
+  {"type": "module", "line": 0, "filename": "utf8-invalid-encoding.177.wasm"}, 
+  {"type": "module", "line": 0, "filename": "utf8-invalid-encoding.178.wasm"}, 
+  {"type": "assert_malformed", "line": 184, "filename": "utf8-invalid-encoding.179.wat", "text": "malformed UTF-8 codepoint", "module_type": "text"}, 
+  {"type": "assert_malformed", "line": 188, "filename": "utf8-invalid-encoding.180.wat", "text": "malformed UTF-8 codepoint", "module_type": "text"}, 
+  {"type": "assert_malformed", "line": 192, "filename": "utf8-invalid-encoding.181.wat", "text": "malformed UTF-8 codepoint", "module_type": "text"}, 
+  {"type": "assert_malformed", "line": 196, "filename": "utf8-invalid-encoding.182.wat", "text": "malformed UTF-8 codepoint", "module_type": "text"}]}

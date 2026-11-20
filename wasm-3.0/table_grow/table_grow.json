@@ -57,4 +57,7 @@
   {"type": "assert_invalid", "line": 163, "filename": "table_grow.11.wasm", "text": "type mismatch", "module_type": "binary"}, 
   {"type": "assert_invalid", "line": 172, "filename": "table_grow.12.wasm", "text": "type mismatch", "module_type": "binary"}, 
   {"type": "assert_invalid", "line": 182, "filename": "table_grow.13.wasm", "text": "type mismatch", "module_type": "binary"}, 
-  {"type": "assert_invalid", "line": 191, "filename": "table_grow.14.wasm", "text": "type mismatch", "module_type": "binary"}]}
+  {"type": "assert_invalid", "line": 191, "filename": "table_grow.14.wasm", "text": "type mismatch", "module_type": "binary"}, 
+  {"type": "module", "line": 201, "filename": "table_grow.15.wasm"}, 
+  {"type": "assert_return", "line": 208, "action": {"type": "invoke", "field": "grow", "args": [{"type": "i32", "value": "4294967295"}]}, "expected": [{"type": "i32", "value": "4294967295"}]}, 
+  {"type": "assert_return", "line": 209, "action": {"type": "invoke", "field": "size", "args": []}, "expected": [{"type": "i32", "value": "1"}]}]}
