@@ -48,10 +48,11 @@
 
 ### Active Tags
 
-* `wasm-core-20261109`: Resync the component-model tests to 2026/11/04 and add the `map`, `version-suffix`, `dtor-context-is-zero`, and `during-sync-call-blocking-ops` tests
+* `wasm-core-20261120`: Update test suite to 2026/11/16, resync the component-model tests to 2026/11/18, and add the `cast` and `exit-without-resolving` tests
 
 ### Older Tags
 
+* `wasm-core-20261109`: Resync the component-model tests to 2026/11/04 and add the `map`, `version-suffix`, `dtor-context-is-zero`, and `during-sync-call-blocking-ops` tests
 * `wasm-core-20261019`: Update test suite to 2026/10/14, resync the component-model binary tests to 2026/10/15, and add the `task.return` validation test
 * `wasm-core-20261001`: Resync the component-model tests to 2026/09/23 and restore the `invalid result arity` expectation of the `select.wast` text assertions
 * `wasm-core-20260922`: Update test suite to 2026/09/21 and add the wide-arithmetic proposal tests
