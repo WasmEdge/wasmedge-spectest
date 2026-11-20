@@ -42,7 +42,7 @@
   * `component-model-validation`: The tests from `test/validation`.
   * `component-model-values`: The tests from `test/values`.
   * The former `component-model-wasm-tools` and `component-model-wasmtime` folders are gone: upstream folded `test/wasm-tools` and `test/wasmtime` into the rest of the test suite, and their cases now live in `binary`, `linking`, `resources`, `validation`, and `values`.
-  * Four of these tests are listed in the spec repository's own `test/nyi.txt` as not implemented by any engine yet: `component-model-validation/kebab`, `component-model-values/post-return`, `component-model-async/big-interleaving-test`, and `component-model-async/forward`.
+  * Five of these tests are listed in the spec repository's own `test/nyi.txt` as not implemented by any engine yet: `component-model-validation/kebab`, `component-model-values/post-return`, `component-model-async/big-interleaving-test`, `component-model-async/forward`, and `component-model-async/exit-without-resolving`.
 
 ## Tags
 
@@ -178,7 +178,7 @@ A new `"either"` type used in the `"expected"` array of `"assert_return"` for no
 
 ### Component-Model Spec Test Changes
 
-The `.wast` files are copied from the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository (commit `d230073`), modified as described below, and converted into `.json` and `.wasm` files with the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools): version 1.263.0 for the tests added or changed since spec commit `0220da8`, version 1.262.0 for `async/validate-task-return.wast`, a build from `main` (commit `3663a40`, for the then unreleased `stream.forward` and `future.forward` built-ins) for the other tests changed since spec commit `8b5c200`, and version 1.256.0 for the rest.
+The `.wast` files are copied from the [`test`](https://github.com/WebAssembly/component-model/tree/main/test) directory of the spec repository (commit `585526a`), modified as described below, and converted into `.json` and `.wasm` files with the `json-from-wast` command of [wasm-tools](https://github.com/bytecodealliance/wasm-tools): version 1.263.0 for the tests added or changed since spec commit `0220da8` (a test whose comments alone changed keeps its converted files), version 1.262.0 for `async/validate-task-return.wast`, a build from `main` (commit `3663a40`, for the then unreleased `stream.forward` and `future.forward` built-ins) for the other tests changed since spec commit `8b5c200`, and version 1.256.0 for the rest.
 
 `(component definition ...)` and `(component instance ...)` become the `"module_definition"` and `"module_instance"` commands above, and `assert_trap` on component instantiation becomes `"assert_uninstantiable"`. Component-level values in `"args"` and `"expected"` use the WIT type names:
 
@@ -199,7 +199,6 @@ The expected messages are adjusted to WasmEdge's diagnostics (<https://github.co
 * `section out of order` in `component-model-binary/binary/binary.wast` line 208 is changed to `unexpected content after last section`, the message used by the WASM spec tests.
 * `component-model-binary/binary/binary.wast` lines 964 and 975 expect `integer representation too long`, the message the WASM spec tests use for a byte that starts no core composite type.
 * The interface version assertions of `component-model-validation/version-suffix/version-suffix.wast` that expect the generic `is not valid` or `invalid interface version` carry the reason WasmEdge reports, as the malformed versions of `component-model-validation/extern-names/extern-names.wast` do.
-* `component-model-async/during-sync-call-exclusive-resume/during-sync-call-exclusive-resume.wast` line 169 expects `async-lifted export failed to produce a result`: the callback returns `EXIT` before its task has a result, which is the first trap of this scenario in the spec, while wasmtime reports the blocked synchronous call.
 
 The reference messages are the ones from `wasm-tools validate --features all` (1.256.0) for loading and validation, and from `wasmtime wast` (46.0.0) for linking and runtime.
 
@@ -207,7 +206,6 @@ The full list of changes:
 
 * `component-model-async/builtin-trap-poisons-instance/builtin-trap-poisons-instance.wast` line 9: `` wasm trap: wasm `unreachable` instruction executed `` -> `` unreachable ``
 * `component-model-async/deadlock/deadlock.wast` line 73: `` wasm trap: deadlock detected: event loop cannot make further progress `` -> `` deadlock detected: event loop cannot make further progress ``
-* `component-model-async/during-sync-call-exclusive-resume/during-sync-call-exclusive-resume.wast` line 169: `` cannot block a synchronous task before returning `` -> `` async-lifted export failed to produce a result ``
 * `component-model-async/forward/forward.wast` line 1455: `` `future.forward` requires a future type `` -> `` requires a future type ``
 * `component-model-async/forward/forward.wast` line 1449: `` `stream.forward` requires a stream type `` -> `` requires a stream type ``
 * `component-model-async/forward/forward.wast` line 993, 1011: `` handle index 1 used with the wrong type `` -> `` used with the wrong type ``

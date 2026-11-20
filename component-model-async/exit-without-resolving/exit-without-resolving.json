@@ -1,0 +1,10 @@
+{"source_filename": "exit-without-resolving.wast",
+ "commands": [
+  {"type": "module_definition", "line": 6, "name": "Tester", "filename": "exit-without-resolving.0.wasm", "module_type": "binary"}, 
+  {"type": "module_instance", "line": 80, "instance": "i", "module": "Tester"}, 
+  {"type": "assert_trap", "line": 81, "action": {"type": "invoke", "field": "sync-typed-wait", "args": []}, "text": "cannot block a synchronous task before returning"}, 
+  {"type": "module_instance", "line": 85, "instance": "i", "module": "Tester"}, 
+  {"type": "assert_trap", "line": 86, "action": {"type": "invoke", "field": "async-typed-wait", "args": []}, "text": "deadlock detected: event loop cannot make further progress"}, 
+  {"type": "module_instance", "line": 90, "instance": "i", "module": "Tester"}, 
+  {"type": "assert_return", "line": 91, "action": {"type": "invoke", "field": "no-wait", "args": []}, "expected": [{"type": "u32", "value": "42"}]}, 
+  {"type": "assert_return", "line": 92, "action": {"type": "invoke", "field": "no-wait", "args": []}, "expected": [{"type": "u32", "value": "42"}]}]}
