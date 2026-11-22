@@ -55,7 +55,7 @@
   {"type": "assert_malformed", "line": 76, "filename": "annotations.52.wat", "text": "empty annotation id", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 77, "filename": "annotations.53.wat", "text": "empty annotation id", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 78, "filename": "annotations.54.wat", "text": "empty annotation id", "module_type": "text"}, 
-  {"type": "assert_malformed", "line": 79, "filename": "annotations.55.wat", "text": "malformed UTF-8", "module_type": "text"}, 
+  {"type": "assert_malformed", "line": 79, "filename": "annotations.55.wat", "text": "malformed UTF-8 encoding", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 81, "filename": "annotations.56.wat", "text": "unclosed annotation", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 82, "filename": "annotations.57.wat", "text": "unclosed annotation", "module_type": "text"}, 
   {"type": "assert_malformed", "line": 83, "filename": "annotations.58.wat", "text": "unclosed annotation", "module_type": "text"}, 
